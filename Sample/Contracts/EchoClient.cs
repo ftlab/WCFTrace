@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    [ServiceContract]
-    public interface IEchoService
+    public class EchoClient : ClientBase<IEchoService>, IEchoService
     {
-        [OperationContract] void Echo(string msg);
+        public void Echo(string msg) => Channel.Echo(msg);
     }
 }

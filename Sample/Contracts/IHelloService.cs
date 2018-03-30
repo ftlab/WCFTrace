@@ -10,7 +10,6 @@ namespace Contracts
     [ServiceContract]
     public interface IHelloService
     {
-        [OperationContract]
-        void Hello();
+        [OperationContract] void Hello();
     }
 }

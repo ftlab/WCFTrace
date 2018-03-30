@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EchoClient.cs" />
+    <Compile Include="HelloClient.cs" />
     <Compile Include="IHelloService.cs" />
     <Compile Include="IEchoService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +48,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WCFTrace\WCFTrace.csproj">
+      <Project>{e73ad741-6bee-4bbc-84a0-8680ab8bdb80}</Project>
+      <Name>WCFTrace</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Contracts\Contracts.csproj">
+      <Project>{CC461118-D773-427D-84FF-3C6305BA40C7}</Project>
+      <Name>Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EchoApp\EchoApp.csproj">
+      <Project>{d1e7b934-f9e0-4cc7-82bb-ac3dd269609d}</Project>
+      <Name>EchoApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HelloApp\HelloApp.csproj">
+      <Project>{56e1b520-5029-48a5-9833-6e47c44f4c1a}</Project>
+      <Name>HelloApp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
