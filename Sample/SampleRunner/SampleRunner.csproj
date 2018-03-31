@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\WCFTrace\WCFTrace.csproj">
-      <Project>{e73ad741-6bee-4bbc-84a0-8680ab8bdb80}</Project>
+      <Project>{a70d04b1-cb7c-43a9-8dc5-99e3511eaaf8}</Project>
       <Name>WCFTrace</Name>
     </ProjectReference>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
