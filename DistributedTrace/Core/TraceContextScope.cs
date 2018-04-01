@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
 
-namespace WCFTrace
+namespace DistributedTrace.Core
 {
     public class TraceContextScope : IDisposable
     {
@@ -16,7 +12,10 @@ namespace WCFTrace
 
         private TraceContextScope _saved;
 
-        public TraceContextScope(TraceContextMode mode)
+        public TraceContext Context { get; internal set; }
+
+        public TraceContextScope(
+            TraceContextMode mode)
         {
             Init();
         }

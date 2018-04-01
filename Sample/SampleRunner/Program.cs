@@ -13,6 +13,8 @@ namespace SampleRunner
     {
         static List<Process> Childs;
 
+        private class MyClass { public string Id; }
+
         static void Main(string[] args)
         {
             Console.WriteLine("starting sample runner");

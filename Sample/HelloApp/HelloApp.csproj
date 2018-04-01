@@ -51,10 +51,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WCFTrace\WCFTrace.csproj">
-      <Project>{a70d04b1-cb7c-43a9-8dc5-99e3511eaaf8}</Project>
-      <Name>WCFTrace</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{cc461118-d773-427d-84ff-3c6305ba40c7}</Project>
       <Name>Contracts</Name>
