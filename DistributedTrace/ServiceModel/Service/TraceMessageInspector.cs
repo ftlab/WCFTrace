@@ -20,12 +20,21 @@ namespace DistributedTrace.ServiceModel.Service
         /// <returns></returns>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            var header = request.Headers.GetHeader<TraceMeHeader>(
-                TraceMeHeader.HeaderName, TraceMeHeader.Namespace);
+            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, TraceMeHeader.Namespace);
+            if (index < 0) return null;
 
+            var header = request.Headers.GetHeader<TraceMeHeader>(index);
             if (header == null) return null;
 
-            return new TraceContextScope(header.Id, TraceContextMode.Add);
+            var @event = new TraceEvent()
+            {
+                Start = DateTime.Now,
+                Message = request.Headers.Action,
+                Source = instanceContext.Host.Description.Name,
+                Type = "DISPATCH"
+            };
+
+            return new TraceContextScope(header.Id, @event, TraceContextMode.Add);
         }
 
         /// <summary>

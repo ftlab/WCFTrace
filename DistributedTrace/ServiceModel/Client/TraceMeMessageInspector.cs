@@ -23,18 +23,27 @@ namespace DistributedTrace.ServiceModel.Client
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
             var scope = TraceContextScope.Current;
-            if (scope != null)
-            {
-                var header = MessageHeader.CreateHeader(
-                    TraceMeHeader.HeaderName, TraceMeHeader.Namespace
-                    , new TraceMeHeader()
-                    {
-                        Id = scope.Id,
-                    });
+            if (scope == null) return null;
 
-                request.Headers.Add(header);
-            }
-            return null;
+            var id = scope.Id;
+            var @event = new TraceEvent()
+            {
+                Start = DateTime.Now,
+                Type = "CALL",
+                Message = request.Headers.Action,
+            };
+
+            var callScope = new TraceContextScope(id, @event, TraceContextMode.Add);
+
+            var header = MessageHeader.CreateHeader(
+                TraceMeHeader.HeaderName, TraceMeHeader.Namespace
+                , new TraceMeHeader()
+                {
+                    Id = id,
+                });
+
+            request.Headers.Add(header);
+            return callScope;
         }
 
         /// <summary>
@@ -44,14 +53,18 @@ namespace DistributedTrace.ServiceModel.Client
         /// <param name="correlationState"></param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            var scope = TraceContext.Current;
-            if (scope != null)
+            var callScope = correlationState as TraceContextScope;
+            if (callScope == null) return;
+            try
             {
-                var header = reply.Headers.GetHeader<TraceHeader>(
-                    TraceHeader.HeaderName, TraceHeader.Namespace);
-
+                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, TraceHeader.Namespace);
+                var header = reply.Headers.GetHeader<TraceHeader>(index);
                 if (header != null && header.Event != null)
-                    scope.Event.AppendEvent(header.Event);
+                    callScope.Context.AppendEvent(header.Event);
+            }
+            finally
+            {
+                callScope.Dispose();
             }
         }
     }

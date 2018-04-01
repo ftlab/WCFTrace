@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using DistributedTrace.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,20 +20,28 @@ namespace SampleRunner
         {
             Console.WriteLine("starting sample runner");
 
-            Childs = new List<Process>() {
+            var traceId = TraceId.Create("Пример");
+            var @event = new TraceEvent() { Start = DateTime.Now, Message = "Hello" };
+
+            using (var scope = new TraceContextScope(traceId, @event, TraceContextMode.New))
+            {
+                Childs = new List<Process>() {
                 Process.Start(nameof(EchoApp))
                 , Process.Start(nameof(HelloApp))};
 
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Console.WriteLine("wait...");
-            Thread.Sleep(TimeSpan.FromSeconds(2));
+                AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                Console.WriteLine("wait...");
+                Thread.Sleep(TimeSpan.FromSeconds(2));
 
-            using (var echo = new EchoClient())
-                echo.Echo("Hello");
+                TraceContext.Current.AppendInfo("World");
 
-            using (var hello = new HelloClient())
-                hello.Hello();
+                using (var echo = new EchoClient())
+                    echo.Echo("Hello");
+
+                using (var hello = new HelloClient())
+                    hello.Hello();
+            }
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();

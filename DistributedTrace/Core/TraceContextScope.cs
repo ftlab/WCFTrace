@@ -7,33 +7,51 @@ namespace DistributedTrace.Core
     /// </summary>
     public class TraceContextScope : IDisposable
     {
+        /// <summary>
+        /// Текущее окружение
+        /// </summary>
         static AsyncLocal<TraceContextScope> _current = new AsyncLocal<TraceContextScope>();
 
+        /// <summary>
+        /// флаг очистки
+        /// </summary>
         private bool _disposed;
 
-        private TraceContextScope _expected;
-
+        /// <summary>
+        /// предыдущая область
+        /// </summary>
         private TraceContextScope _saved;
 
-        private readonly TraceId _id;
-
-        private readonly TraceContextMode _mode;
-
-        public TraceContextScope(TraceId id, TraceContextMode mode)
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="mode"></param>
+        public TraceContextScope(TraceId id, TraceEvent @event, TraceContextMode mode)
         {
             if (id == null) throw new ArgumentNullException("id");
-            _id = id;
-            _mode = mode;
+            if (@event == null) throw new ArgumentNullException("event");
+
+            Id = id;
+            Mode = mode;
+            Context = new TraceContext(@event);
+
+            PushScope();
         }
 
-        public TraceContextScope(string id, string name, TraceContextMode mode) : this(TraceId.Create(id, name), mode) { }
+        /// <summary>
+        /// Идентификатор
+        /// </summary>
+        public TraceId Id { get; private set; }
 
-        public TraceContextScope(string name, TraceContextMode mode) : this(TraceId.Create(name), mode) { }
+        /// <summary>
+        /// Режим трассировки
+        /// </summary>
+        public TraceContextMode Mode { get; private set; }
 
-        public TraceId Id { get { return _id; } }
-
-        public TraceContextMode Mode { get { return _mode; } }
-
+        /// <summary>
+        /// Требуется запись
+        /// </summary>
         public bool RequiredWrite
         {
             get
@@ -52,8 +70,35 @@ namespace DistributedTrace.Core
             }
         }
 
-        public TraceContext Context { get; internal set; }
+        /// <summary>
+        /// Требуется передать событие выше
+        /// </summary>
+        public bool RequiredAdd
+        {
+            get
+            {
+                if (Mode == TraceContextMode.None)
+                    return false;
+                else if (Mode == TraceContextMode.New)
+                    return false;
+                else if (Mode == TraceContextMode.NewAndAdd)
+                    return _saved != null;
+                else if (Mode == TraceContextMode.Add)
+                    return _saved != null;
+                else if (Mode == TraceContextMode.AddOrNew)
+                    return _saved != null;
+                else throw new ArgumentOutOfRangeException(Mode.ToString());
+            }
+        }
 
+        /// <summary>
+        /// Контекст трассировки
+        /// </summary>
+        public TraceContext Context { get; private set; }
+
+        /// <summary>
+        /// Текущее окружение
+        /// </summary>
         public static TraceContextScope Current
         {
             get
@@ -66,6 +111,26 @@ namespace DistributedTrace.Core
             }
         }
 
+        /// <summary>
+        /// Положить окружение
+        /// </summary>
+        private void PushScope()
+        {
+            _saved = Current;
+            Current = this;
+        }
+
+        /// <summary>
+        /// Извлечь окружение
+        /// </summary>
+        private void PopScope()
+        {
+            Current = _saved;
+        }
+
+        /// <summary>
+        /// Очистить
+        /// </summary>
         public void Dispose()
         {
             if (_disposed) return;
@@ -75,36 +140,11 @@ namespace DistributedTrace.Core
             if (RequiredWrite)
                 TraceWriter.Default.Write(Id, Context.Event);
 
-            PopContext();
+            if (RequiredAdd)
+                _saved.Context.AppendEvent(Context.Event);
 
+            PopScope();
             _disposed = true;
-        }
-
-        private void PopContext()
-        {
-
-        }
-
-        private bool NeedToCreateContext(TraceContextMode mode)
-        {
-            bool retVal = false;
-            switch (mode)
-            {
-                case TraceContextMode.New:
-                    retVal = true;
-                    break;
-                case TraceContextMode.Add:
-                    _expected = _saved;
-                    break;
-                case TraceContextMode.AddOrNew:
-                    _expected = _saved;
-                    if (_expected == null)
-                        retVal = true;
-                    break;
-                default: throw new ArgumentOutOfRangeException("mode");
-            }
-
-            return retVal;
         }
     }
 }

@@ -51,6 +51,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DistributedTrace\DistributedTrace.csproj">
+      <Project>{82f52a14-3a09-4a01-831a-970a783a4c26}</Project>
+      <Name>DistributedTrace</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{CC461118-D773-427D-84FF-3C6305BA40C7}</Project>
       <Name>Contracts</Name>

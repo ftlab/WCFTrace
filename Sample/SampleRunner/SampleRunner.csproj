@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -50,6 +51,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DistributedTrace\DistributedTrace.csproj">
+      <Project>{82F52A14-3A09-4A01-831A-970A783A4C26}</Project>
+      <Name>DistributedTrace</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{CC461118-D773-427D-84FF-3C6305BA40C7}</Project>
       <Name>Contracts</Name>

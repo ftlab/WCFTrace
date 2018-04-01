@@ -84,7 +84,7 @@ namespace DistributedTrace.Core
             if (string.IsNullOrEmpty(Message) == false)
                 builder.AppendFormat("{0}, ", Message);
 
-            builder.AppendFormat("{0:YYYY-MM-dd HH:mm:ss}", Start);
+            builder.AppendFormat("{0:HH:mm:ss}", Start);
 
             if (End != null)
             {
@@ -99,7 +99,7 @@ namespace DistributedTrace.Core
                 Events.ForEach(l =>
                 {
                     builder.AppendLine();
-                    l.WriteTo(builder, prefLine + "\t");
+                    l.WriteTo(builder, prefLine + "  ");
                 });
         }
 
