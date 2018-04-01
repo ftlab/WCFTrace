@@ -13,8 +13,10 @@ namespace HelloApp
         public void Hello()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
+
             Console.WriteLine("Hello");
             Console.ResetColor();
+
 
             using (var echo = new EchoClient())
                 echo.Echo("вызов echo");

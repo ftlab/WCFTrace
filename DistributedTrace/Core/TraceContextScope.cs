@@ -33,8 +33,8 @@ namespace DistributedTrace.Core
             if (@event == null) throw new ArgumentNullException("event");
 
             Id = id;
+            Event = @event;
             Mode = mode;
-            Context = new TraceContext(@event);
 
             PushScope();
         }
@@ -43,6 +43,11 @@ namespace DistributedTrace.Core
         /// Идентификатор
         /// </summary>
         public TraceId Id { get; private set; }
+
+        /// <summary>
+        /// Событие трассировки
+        /// </summary>
+        public TraceEvent Event { get; private set; }
 
         /// <summary>
         /// Режим трассировки
@@ -92,6 +97,27 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
+        /// Требуется создание контекста
+        /// </summary>
+        public bool RequiredNewContext
+        {
+            get
+            {
+                if (Mode == TraceContextMode.None)
+                    return false;
+                else if (Mode == TraceContextMode.New)
+                    return true;
+                else if (Mode == TraceContextMode.NewAndAdd)
+                    return true;
+                else if (Mode == TraceContextMode.Add)
+                    return true;
+                else if (Mode == TraceContextMode.AddOrNew)
+                    return true;
+                else throw new ArgumentOutOfRangeException(Mode.ToString());
+            }
+        }
+
+        /// <summary>
         /// Контекст трассировки
         /// </summary>
         public TraceContext Context { get; private set; }
@@ -116,6 +142,12 @@ namespace DistributedTrace.Core
         /// </summary>
         private void PushScope()
         {
+            Context = new TraceContext(Event);
+            //if (RequiredNewContext)
+            //    Context = new TraceContext(Event);
+            //else
+            //    Context = Current?.Context ?? NullTrace.Instance;
+
             _saved = Current;
             Current = this;
         }

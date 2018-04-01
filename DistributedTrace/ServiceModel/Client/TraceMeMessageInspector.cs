@@ -58,6 +58,8 @@ namespace DistributedTrace.ServiceModel.Client
             try
             {
                 var index = reply.Headers.FindHeader(TraceHeader.HeaderName, TraceHeader.Namespace);
+                if (index < 0) return;
+
                 var header = reply.Headers.GetHeader<TraceHeader>(index);
                 if (header != null && header.Event != null)
                     callScope.Context.AppendEvent(header.Event);
