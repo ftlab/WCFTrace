@@ -34,8 +34,6 @@ namespace SampleRunner
                 Console.WriteLine("wait...");
                 Thread.Sleep(TimeSpan.FromSeconds(2));
 
-                TraceContext.Current.AppendInfo("World");
-
                 using (var echo = new EchoClient())
                     echo.Echo("Hello");
 

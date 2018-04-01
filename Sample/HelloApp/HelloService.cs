@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using DistributedTrace.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,9 @@ namespace HelloApp
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Hello");
             Console.ResetColor();
-            //
+
+            using (var echo = new EchoClient())
+                echo.Echo("вызов echo");
         }
     }
 }
