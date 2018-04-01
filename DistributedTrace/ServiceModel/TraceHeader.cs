@@ -3,13 +3,19 @@ using System.Runtime.Serialization;
 
 namespace DistributedTrace.ServiceModel
 {
-    [DataContract]
+    /// <summary>
+    /// Заголовок результата трассировки
+    /// </summary>
+    [DataContract(Name = HeaderName, Namespace = Namespace)]
     public class TraceHeader
     {
         public const string HeaderName = "Trace";
         public const string Namespace = "http://fintech.ru/distributedtrace";
 
+        /// <summary>
+        /// Событие трассировки
+        /// </summary>
         [DataMember]
-        public TraceLine Trace { get; set; }
+        public TraceEvent Event { get; set; }
     }
 }

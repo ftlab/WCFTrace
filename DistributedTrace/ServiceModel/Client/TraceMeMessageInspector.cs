@@ -22,15 +22,14 @@ namespace DistributedTrace.ServiceModel.Client
         /// <returns></returns>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            var ctx = TraceContext.Current;
-            if (ctx != null)
+            var scope = TraceContextScope.Current;
+            if (scope != null)
             {
                 var header = MessageHeader.CreateHeader(
                     TraceMeHeader.HeaderName, TraceMeHeader.Namespace
                     , new TraceMeHeader()
                     {
-                        Id = ctx.Trace.Id,
-                        Name = ctx.Trace.Name,
+                        Id = scope.Id,
                     });
 
                 request.Headers.Add(header);
@@ -45,13 +44,14 @@ namespace DistributedTrace.ServiceModel.Client
         /// <param name="correlationState"></param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            var ctx = TraceContext.Current;
-            if (ctx != null)
+            var scope = TraceContext.Current;
+            if (scope != null)
             {
                 var header = reply.Headers.GetHeader<TraceHeader>(
                     TraceHeader.HeaderName, TraceHeader.Namespace);
-                if (header != null && header.Trace != null)
-                    ctx.Trace.AddTrace(header.Trace);
+
+                if (header != null && header.Event != null)
+                    scope.Event.AppendEvent(header.Event);
             }
         }
     }

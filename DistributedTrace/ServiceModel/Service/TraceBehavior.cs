@@ -6,6 +6,9 @@ using System.ServiceModel.Description;
 
 namespace DistributedTrace.ServiceModel.Service
 {
+    /// <summary>
+    /// Поведение для трассировки сервиса
+    /// </summary>
     public class TraceBehavior : IServiceBehavior
     {
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)

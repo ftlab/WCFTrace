@@ -2,9 +2,12 @@
 
 namespace DistributedTrace.Core
 {
+    /// <summary>
+    /// Окружение контекста трассировки
+    /// </summary>
     public class TraceContextScope : IDisposable
     {
-        static AsyncLocal<TraceContextScope> _currentScope = new AsyncLocal<TraceContextScope>();
+        static AsyncLocal<TraceContextScope> _current = new AsyncLocal<TraceContextScope>();
 
         private bool _disposed;
 
@@ -12,24 +15,68 @@ namespace DistributedTrace.Core
 
         private TraceContextScope _saved;
 
-        public TraceContext Context { get; internal set; }
+        private readonly TraceId _id;
 
-        public TraceContextScope(
-            TraceContextMode mode)
+        private readonly TraceContextMode _mode;
+
+        public TraceContextScope(TraceId id, TraceContextMode mode)
         {
-            Init();
+            if (id == null) throw new ArgumentNullException("id");
+            _id = id;
+            _mode = mode;
         }
 
-        private void Init()
+        public TraceContextScope(string id, string name, TraceContextMode mode) : this(TraceId.Create(id, name), mode) { }
+
+        public TraceContextScope(string name, TraceContextMode mode) : this(TraceId.Create(name), mode) { }
+
+        public TraceId Id { get { return _id; } }
+
+        public TraceContextMode Mode { get { return _mode; } }
+
+        public bool RequiredWrite
         {
-            //var octx = OperationContext.
+            get
+            {
+                if (Mode == TraceContextMode.None)
+                    return false;
+                else if (Mode == TraceContextMode.New)
+                    return true;
+                else if (Mode == TraceContextMode.NewAndAdd)
+                    return true;
+                else if (Mode == TraceContextMode.Add)
+                    return false;
+                else if (Mode == TraceContextMode.AddOrNew)
+                    return _saved == null;
+                else throw new ArgumentOutOfRangeException(Mode.ToString());
+            }
+        }
+
+        public TraceContext Context { get; internal set; }
+
+        public static TraceContextScope Current
+        {
+            get
+            {
+                return _current.Value;
+            }
+            private set
+            {
+                _current.Value = value;
+            }
         }
 
         public void Dispose()
         {
             if (_disposed) return;
 
+            Context.Event.End = DateTime.Now;
+
+            if (RequiredWrite)
+                TraceWriter.Default.Write(Id, Context.Event);
+
             PopContext();
+
             _disposed = true;
         }
 

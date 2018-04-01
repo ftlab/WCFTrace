@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using DistributedTrace.Core;
+using System.Runtime.Serialization;
 
 namespace DistributedTrace.ServiceModel
 {
@@ -15,13 +16,6 @@ namespace DistributedTrace.ServiceModel
         /// Идентификатор трассировки
         /// </summary>
         [DataMember]
-        public string Id { get; set; }
-
-        /// <summary>
-        /// Наименование трассировки
-        /// </summary>
-        [DataMember]
-        public string Name { get; set; }
-
+        public TraceId Id { get; set; }
     }
 }
