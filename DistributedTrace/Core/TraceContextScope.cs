@@ -40,6 +40,27 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="mode"></param>
+        public TraceContextScope(string name, TraceContextMode mode = TraceContextMode.Add)
+        {
+            if (Current != null)
+                Id = Current.Id;
+            else
+                Id = TraceId.Create(name);
+            Event = new TraceEvent()
+            {
+                Message = name,
+                Start = DateTime.Now,
+            };
+            Mode = mode;
+
+            PushScope();
+        }
+
+        /// <summary>
         /// Идентификатор
         /// </summary>
         public TraceId Id { get; private set; }
@@ -97,27 +118,6 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
-        /// Требуется создание контекста
-        /// </summary>
-        public bool RequiredNewContext
-        {
-            get
-            {
-                if (Mode == TraceContextMode.None)
-                    return false;
-                else if (Mode == TraceContextMode.New)
-                    return true;
-                else if (Mode == TraceContextMode.NewAndAdd)
-                    return true;
-                else if (Mode == TraceContextMode.Add)
-                    return true;
-                else if (Mode == TraceContextMode.AddOrNew)
-                    return true;
-                else throw new ArgumentOutOfRangeException(Mode.ToString());
-            }
-        }
-
-        /// <summary>
         /// Контекст трассировки
         /// </summary>
         public TraceContext Context { get; private set; }
@@ -143,10 +143,6 @@ namespace DistributedTrace.Core
         private void PushScope()
         {
             Context = new TraceContext(Event);
-            //if (RequiredNewContext)
-            //    Context = new TraceContext(Event);
-            //else
-            //    Context = Current?.Context ?? NullTrace.Instance;
 
             _saved = Current;
             Current = this;

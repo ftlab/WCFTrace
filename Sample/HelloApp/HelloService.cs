@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HelloApp
@@ -17,6 +18,10 @@ namespace HelloApp
             Console.WriteLine("Hello");
             Console.ResetColor();
 
+            using (var dbscope = new TraceContextScope("бд"))
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+            }
 
             using (var echo = new EchoClient())
                 echo.Echo("вызов echo");
