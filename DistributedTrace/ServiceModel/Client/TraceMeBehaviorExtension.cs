@@ -5,7 +5,7 @@ namespace DistributedTrace.ServiceModel.Client
 {
     public class TraceMeBehaviorExtension : BehaviorExtensionElement
     {
-        public override Type BehaviorType => typeof(TraceMeBehavior);
+        public override Type BehaviorType { get { return typeof(TraceMeBehavior); } }
 
         protected override object CreateBehavior()
         {
