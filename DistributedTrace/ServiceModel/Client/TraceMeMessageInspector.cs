@@ -35,6 +35,10 @@ namespace DistributedTrace.ServiceModel.Client
 
             var callScope = new TraceContextScope(id, @event, TraceContextMode.Add);
 
+            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, TraceMeHeader.Namespace);
+            if (index > -1)
+                request.Headers.RemoveAt(index);
+
             var header = MessageHeader.CreateHeader(
                 TraceMeHeader.HeaderName, TraceMeHeader.Namespace
                 , new TraceMeHeader()

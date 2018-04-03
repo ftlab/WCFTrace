@@ -55,12 +55,18 @@ namespace DistributedTrace.ServiceModel.Service
                 var @event = ctx.Event;
                 @event.End = DateTime.Now;
 
+                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, TraceHeader.Namespace);
+                if (index > -1)
+                    reply.Headers.RemoveAt(index);
+
+                var traceHeader = new TraceHeader()
+                {
+                    Event = @event,
+                };
+
                 var header = MessageHeader.CreateHeader(
                     TraceHeader.HeaderName, TraceHeader.Namespace
-                    , new TraceHeader()
-                    {
-                        Event = @event
-                    });
+                    , traceHeader);
 
                 reply.Headers.Add(header);
             }

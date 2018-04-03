@@ -12,6 +12,8 @@ namespace DistributedTrace.Core
         /// </summary>
         private readonly TraceEvent _event;
 
+        public EventHandler<OnTraceEventArgs> OnEvent;
+
         /// <summary>
         /// Конструктор
         /// </summary>
@@ -48,6 +50,10 @@ namespace DistributedTrace.Core
         public virtual void AppendEvent(TraceEvent @event)
         {
             Event.AppendEvent(@event);
+
+            var h = OnEvent;
+            if (h != null)
+                h(this, new OnTraceEventArgs(@event));
         }
 
         /// <summary>
@@ -58,12 +64,12 @@ namespace DistributedTrace.Core
         /// <param name="source"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void AppendEvent(string message
+        public static void AppendEvent(string message
             , string type = null
             , string source = null
             , DateTime? start = null, DateTime? end = null)
         {
-            AppendEvent(new TraceEvent()
+            Current.AppendEvent(new TraceEvent()
             {
                 Message = message,
                 Type = type,
@@ -80,7 +86,7 @@ namespace DistributedTrace.Core
         /// <param name="source"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void AppendInfo(string info, string source = null, DateTime? start = null, DateTime? end = null)
+        public static void AppendInfo(string info, string source = null, DateTime? start = null, DateTime? end = null)
         {
             AppendEvent(message: info, type: "I", source: source
                 , start: start, end: end);
@@ -93,7 +99,7 @@ namespace DistributedTrace.Core
         /// <param name="source"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void AppendWarn(string warn, string source = null, DateTime? start = null, DateTime? end = null)
+        public static void AppendWarn(string warn, string source = null, DateTime? start = null, DateTime? end = null)
         {
             AppendEvent(message: warn, type: "W", source: source
                 , start: start, end: end);
@@ -106,7 +112,7 @@ namespace DistributedTrace.Core
         /// <param name="source"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void AppendError(string error, string source = null, DateTime? start = null, DateTime? end = null)
+        public static void AppendError(string error, string source = null, DateTime? start = null, DateTime? end = null)
         {
             AppendEvent(message: error, type: "E", source: source
                 , start: start, end: end);
@@ -119,7 +125,7 @@ namespace DistributedTrace.Core
         /// <param name="source"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void AppendError(Exception exception, string source = null, DateTime? start = null, DateTime? end = null)
+        public static void AppendError(Exception exception, string source = null, DateTime? start = null, DateTime? end = null)
         {
             AppendError(error: exception.GetType().Name, source: source
                 , start: start, end: end);
