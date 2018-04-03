@@ -20,19 +20,17 @@ namespace DistributedTrace.ServiceModel.Service
         /// <returns></returns>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, TraceMeHeader.Namespace);
+            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, Namespace.Value);
             if (index < 0) return null;
 
             var header = request.Headers.GetHeader<TraceMeHeader>(index);
             if (header == null) return null;
 
-            var @event = new TraceEvent()
-            {
-                Start = DateTime.Now,
-                Message = request.Headers.Action,
-                Source = instanceContext.Host.Description.Name,
-                Type = "DISPATCH"
-            };
+            var @event = TraceEvent.Create(
+                id: header.Id
+                , message: request.Headers.Action
+                , source: instanceContext.Host.Description.Name
+                , type: "disp");
 
             return new TraceContextScope(header.Id, @event, TraceContextMode.Add);
         }
@@ -52,20 +50,21 @@ namespace DistributedTrace.ServiceModel.Service
             {
                 var ctx = scope.Context;
 
-                var @event = ctx.Event;
-                @event.End = DateTime.Now;
+                var @event = ctx.Root;
+                @event.SetEnd(scope.Id);
 
-                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, TraceHeader.Namespace);
+                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, Namespace.Value);
                 if (index > -1)
                     reply.Headers.RemoveAt(index);
 
                 var traceHeader = new TraceHeader()
                 {
-                    Event = @event,
+                    TraceId = scope.Id,
+                    Root = @event,
                 };
 
                 var header = MessageHeader.CreateHeader(
-                    TraceHeader.HeaderName, TraceHeader.Namespace
+                    TraceHeader.HeaderName, Namespace.Value
                     , traceHeader);
 
                 reply.Headers.Add(header);

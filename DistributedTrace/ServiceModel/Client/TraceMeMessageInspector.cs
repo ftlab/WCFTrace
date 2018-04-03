@@ -1,11 +1,13 @@
 ﻿using DistributedTrace.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Text;
+using System.Xml;
 
 namespace DistributedTrace.ServiceModel.Client
 {
@@ -26,21 +28,18 @@ namespace DistributedTrace.ServiceModel.Client
             if (scope == null) return null;
 
             var id = scope.Id;
-            var @event = new TraceEvent()
-            {
-                Start = DateTime.Now,
-                Type = "CALL",
-                Message = request.Headers.Action,
-            };
+            var @event = TraceEvent.Create(id: id
+                , message: request.Headers.Action
+                , type: "call");
 
             var callScope = new TraceContextScope(id, @event, TraceContextMode.Add);
 
-            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, TraceMeHeader.Namespace);
+            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, Namespace.Value);
             if (index > -1)
                 request.Headers.RemoveAt(index);
 
             var header = MessageHeader.CreateHeader(
-                TraceMeHeader.HeaderName, TraceMeHeader.Namespace
+                TraceMeHeader.HeaderName, Namespace.Value
                 , new TraceMeHeader()
                 {
                     Id = id,
@@ -57,16 +56,25 @@ namespace DistributedTrace.ServiceModel.Client
         /// <param name="correlationState"></param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
+            var buffer = reply.CreateBufferedCopy(int.MaxValue);
+
+            using (var fs = new FileStream("1.xml", FileMode.Create, FileAccess.Write))
+            using (var m = buffer.CreateMessage())
+            using (var wr = XmlWriter.Create(fs))
+                m.WriteMessage(wr);
+
+            reply = buffer.CreateMessage();
+
             var callScope = correlationState as TraceContextScope;
             if (callScope == null) return;
             try
             {
-                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, TraceHeader.Namespace);
+                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, Namespace.Value);
                 if (index < 0) return;
 
                 var header = reply.Headers.GetHeader<TraceHeader>(index);
-                if (header != null && header.Event != null)
-                    callScope.Context.AppendEvent(header.Event);
+                if (header != null && header.Root != null)
+                    callScope.Context.AppendEvent(header.Root);
             }
             finally
             {

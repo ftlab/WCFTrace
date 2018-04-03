@@ -27,13 +27,15 @@ namespace DistributedTrace.Core
         /// </summary>
         /// <param name="id"></param>
         /// <param name="mode"></param>
-        public TraceContextScope(TraceId id, TraceEvent @event, TraceContextMode mode)
+        public TraceContextScope(TraceId id
+            , TraceEvent root
+            , TraceContextMode mode)
         {
             if (id == null) throw new ArgumentNullException("id");
-            if (@event == null) throw new ArgumentNullException("event");
+            if (root == null) throw new ArgumentNullException("root");
 
             Id = id;
-            Event = @event;
+            Root = root;
             Mode = mode;
 
             PushScope();
@@ -44,17 +46,17 @@ namespace DistributedTrace.Core
         /// </summary>
         /// <param name="name"></param>
         /// <param name="mode"></param>
-        public TraceContextScope(string name, TraceContextMode mode = TraceContextMode.Add)
+        public TraceContextScope(string eventName
+            , TraceContextMode mode = TraceContextMode.Add
+            , string source = null
+            , string type = null)
         {
             if (Current != null)
                 Id = Current.Id;
             else
-                Id = TraceId.Create(name);
-            Event = new TraceEvent()
-            {
-                Message = name,
-                Start = DateTime.Now,
-            };
+                Id = TraceId.Create(eventName);
+
+            Root = TraceEvent.Create(Id, eventName, source, type);
             Mode = mode;
 
             PushScope();
@@ -68,7 +70,7 @@ namespace DistributedTrace.Core
         /// <summary>
         /// Событие трассировки
         /// </summary>
-        public TraceEvent Event { get; private set; }
+        public TraceEvent Root { get; private set; }
 
         /// <summary>
         /// Режим трассировки
@@ -142,7 +144,7 @@ namespace DistributedTrace.Core
         /// </summary>
         private void PushScope()
         {
-            Context = new TraceContext(Event);
+            Context = new TraceContext(Id, Root);
 
             _saved = Current;
             Current = this;
@@ -163,13 +165,13 @@ namespace DistributedTrace.Core
         {
             if (_disposed) return;
 
-            Context.Event.End = DateTime.Now;
+            Context.Root.SetEnd(Id);
 
             if (RequiredWrite)
-                TraceWriter.Default.Write(Id, Context.Event);
+                TraceWriter.Default.Write(Id, Context.Root);
 
             if (RequiredAdd)
-                _saved.Context.AppendEvent(Context.Event);
+                _saved.Context.AppendEvent(Context.Root);
 
             PopScope();
             _disposed = true;

@@ -6,20 +6,25 @@ namespace DistributedTrace.Core
     /// <summary>
     /// Идентификатор трассировки
     /// </summary>
-    [DataContract]
+    [DataContract(Name = "traceid", Namespace = Namespace.Value)]
     public class TraceId
     {
+        private TraceId() { }
+
         /// <summary>
         /// Уникальный номер
         /// </summary>
-        [DataMember]
-        public string Id { get; set; }
+        [DataMember(Name = "id", Order = 0)]
+        public string Id { get; private set; }
 
         /// <summary>
         /// Наименование
         /// </summary>
-        [DataMember]
-        public string Name { get; set; }
+        [DataMember(Name = "name", Order = 1)]
+        public string Name { get; private set; }
+
+        [DataMember(Name = "ts", Order = 2)]
+        public DateTime Timestamp { get; private set; }
 
         /// <summary>
         /// Проверка на равенство
@@ -31,7 +36,8 @@ namespace DistributedTrace.Core
             if (other == null) return false;
 
             return other.Id == Id
-                && other.Name == Name;
+                && other.Name == Name
+                && other.Timestamp == Timestamp;
         }
 
         /// <summary>
@@ -63,8 +69,9 @@ namespace DistributedTrace.Core
         {
             return new TraceId()
             {
-                Id = id,
+                Id = id ?? Guid.NewGuid().ToString(),
                 Name = name,
+                Timestamp = DateTime.UtcNow,
             };
         }
 
@@ -75,7 +82,7 @@ namespace DistributedTrace.Core
         /// <returns></returns>
         public static TraceId Create(string name)
         {
-            return Create(Guid.NewGuid().ToString(), name);
+            return Create(null, name);
         }
 
         /// <summary>
@@ -84,7 +91,7 @@ namespace DistributedTrace.Core
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[{0}, {1}]", Name, Id);
+            return string.Format("[{0}, {1}, {2: yyyy-MM-dd HH:mm:ss}]", Name, Id, Timestamp.ToLocalTime());
         }
     }
 }

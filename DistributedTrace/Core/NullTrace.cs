@@ -15,7 +15,8 @@ namespace DistributedTrace.Core
         /// <summary>
         /// Конструктор
         /// </summary>
-        private NullTrace() : base(new TraceEvent() { Start = DateTime.Now, Message = "NULL" })
+        private NullTrace() : base(TraceId.Create("NULL")
+            , null)
         {
         }
 
@@ -23,7 +24,7 @@ namespace DistributedTrace.Core
         /// Добавить строку
         /// </summary>
         /// <param name="event"></param>
-        public override void AppendEvent(TraceEvent @event)
+        internal override void AppendEvent(TraceEvent @event)
         {
 
         }

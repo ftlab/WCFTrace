@@ -26,8 +26,8 @@ namespace DistributedTrace.Core
             if (@event == null) throw new ArgumentNullException("event");
 
             var builder = new StringBuilder();
-            builder.AppendLine(string.Format("[{0}, {1}, {2:yyyy-MM-dd HH:mm:ss}]", id.Name, id.Id, @event.Start));
-            @event.WriteTo(builder);
+            builder.AppendLine(id.ToString());
+            @event.WriteTo(builder, id);
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(builder.ToString());

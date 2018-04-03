@@ -10,7 +10,9 @@ namespace DistributedTrace.Core
         /// <summary>
         /// событие трассировки
         /// </summary>
-        private readonly TraceEvent _event;
+        private readonly TraceEvent _root;
+
+        private readonly TraceId _id;
 
         public EventHandler<OnTraceEventArgs> OnEvent;
 
@@ -18,16 +20,20 @@ namespace DistributedTrace.Core
         /// Конструктор
         /// </summary>
         /// <param name="event"></param>
-        internal TraceContext(TraceEvent @event)
+        internal TraceContext(TraceId id
+            , TraceEvent root)
         {
-            if (@event == null) throw new ArgumentNullException("event");
-            _event = @event;
+            if (id == null) throw new ArgumentNullException("id");
+            _id = id;
+            _root = root;
         }
+
+        public TraceId Id { get { return _id; } }
 
         /// <summary>
         /// Корневая запись трассировки
         /// </summary>
-        public TraceEvent Event { get { return _event; } }
+        public TraceEvent Root { get { return _root; } }
 
         /// <summary>
         /// Текущий контекст
@@ -47,9 +53,9 @@ namespace DistributedTrace.Core
         /// Добавить строку
         /// </summary>
         /// <param name="event"></param>
-        public virtual void AppendEvent(TraceEvent @event)
+        internal virtual void AppendEvent(TraceEvent @event)
         {
-            Event.AppendEvent(@event);
+            Root.AppendEvent(@event);
 
             var h = OnEvent;
             if (h != null)
@@ -69,14 +75,13 @@ namespace DistributedTrace.Core
             , string source = null
             , DateTime? start = null, DateTime? end = null)
         {
-            Current.AppendEvent(new TraceEvent()
-            {
-                Message = message,
-                Type = type,
-                Source = source,
-                Start = start ?? DateTime.Now,
-                End = end,
-            });
+            var current = Current;
+
+            current.AppendEvent(TraceEvent.Create(
+                current.Id
+                , message
+                , source
+                , type));
         }
 
         /// <summary>

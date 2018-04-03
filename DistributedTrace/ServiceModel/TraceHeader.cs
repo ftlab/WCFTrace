@@ -6,16 +6,17 @@ namespace DistributedTrace.ServiceModel
     /// <summary>
     /// Заголовок результата трассировки
     /// </summary>
-    [DataContract(Name = HeaderName, Namespace = Namespace)]
+    [DataContract(Name = HeaderName, Namespace = Namespace.Value)]
     public class TraceHeader
     {
-        public const string HeaderName = "Trace";
-        public const string Namespace = "http://fintech.ru/distributedtrace";
+        public const string HeaderName = "trace";
 
+        [DataMember(Name = "traceid", Order = 0)]
+        public TraceId TraceId { get; set; }
         /// <summary>
         /// Событие трассировки
         /// </summary>
-        [DataMember]
-        public TraceEvent Event { get; set; }
+        [DataMember(Name = "root", Order = 1)]
+        public TraceEvent Root { get; set; }
     }
 }

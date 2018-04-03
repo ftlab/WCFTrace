@@ -20,14 +20,11 @@ namespace SampleRunner
         {
             Console.WriteLine("starting sample runner");
 
-            var traceId = TraceId.Create("Пример");
-            var @event = new TraceEvent() { Start = DateTime.Now, Message = "Hello" };
-
-            using (var scope = new TraceContextScope(traceId, @event, TraceContextMode.New))
+            using (var scope = new TraceContextScope("Пример", TraceContextMode.New))
             {
-                Childs = new List<Process>() {
-                Process.Start(nameof(EchoApp))
-                , Process.Start(nameof(HelloApp))};
+                //Childs = new List<Process>() {
+                //Process.Start(nameof(EchoApp))
+                //, Process.Start(nameof(HelloApp))};
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
