@@ -54,18 +54,25 @@ namespace DistributedTrace.Core
 
         public TimeSpan BeginTime { get { return TimeSpan.FromMilliseconds(Begin); } }
 
-        public int? Duration { get { return End - Begin; } }
+        public TimeSpan? Duration
+        {
+            get
+            {
+                if (End == null) return null;
+                return TimeSpan.FromMilliseconds(End.Value - Begin);
+            }
+        }
 
-        public int? Different
+        public TimeSpan? Different
         {
             get
             {
                 if (Duration == null) return null;
 
                 if (Events == null || Events.Count == 0)
-                    return 0;
+                    return TimeSpan.Zero;
 
-                return Duration - Events.Sum(e => e.Duration ?? 0);
+                return Duration - TimeSpan.FromMilliseconds(Events.Sum(e => (e.End - e.Begin) ?? 0));
             }
         }
 
@@ -113,48 +120,21 @@ namespace DistributedTrace.Core
             return this;
         }
 
-        /// <summary>
-        /// Запись события
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="prefLine"></param>
-        public void WriteTo(StringBuilder builder
-            , TraceId id
-            , string prefLine = null)
+        public void Visit(Action<TraceEvent, int, int> onEvent)
         {
-            if (builder == null) throw new ArgumentNullException("builder");
+            if (onEvent == null) return;
 
-            prefLine = prefLine ?? string.Empty;
+            VisitTree(onEvent, 0, 0);
+        }
 
-            builder.Append(prefLine);
-
-            if (string.IsNullOrEmpty(Type) == false)
-                builder.AppendFormat("{0}> ", Type);
-            if (string.IsNullOrEmpty(Source) == false)
-                builder.AppendFormat("{0}: ", Source);
-            if (string.IsNullOrEmpty(Message) == false)
-                builder.AppendFormat("{0}, ", Message);
-
-            builder.AppendFormat("{0:HH:mm:ss}", GetBeginDateTime(id).ToLocalTime());
-
-            if (Duration != null)
-            {
-                var ts = TimeSpan.FromMilliseconds(Duration.Value);
-                builder.AppendFormat(", [{0}]", ts);
-            }
-
-            if (Different != null)
-            {
-                var ts = TimeSpan.FromMilliseconds(Different.Value);
-                builder.AppendFormat(", [{0}]", ts);
-            }
+        private void VisitTree(Action<TraceEvent, int, int> onEvent, int level, int pos)
+        {
+            onEvent(this, level, pos);
 
             if (Events != null)
-                Events.ForEach(l =>
-                {
-                    builder.AppendLine();
-                    l.WriteTo(builder, id, prefLine + "  ");
-                });
+                for (int i = 0; i < Events.Count; i++)
+                    Events[i].VisitTree(onEvent, level + 1, i);
+
         }
 
         /// <summary>
