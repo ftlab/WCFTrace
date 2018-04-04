@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace DistributedTrace.Core
 {
@@ -134,16 +133,11 @@ namespace DistributedTrace.Core
             if (Events != null)
                 for (int i = 0; i < Events.Count; i++)
                     Events[i].VisitTree(onEvent, level + 1, i);
-
         }
 
         /// <summary>
         /// Отображаемый текст события
         /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format("Begin: {0} ms", Begin);
-        }
+        /// <returns></returns>        
     }
 }

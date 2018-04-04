@@ -53,15 +53,15 @@ namespace DistributedTrace.Core
                             Console.ForegroundColor = ConsoleColor.Yellow;
 
                         if (dt.TotalDays > 1)
-                            Console.Write("[{0} d, {1:d2}]", dt.Days, dt.Hours);
+                            Console.Write("[{0} d, {1} h]", dt.Days, dt.Hours);
                         else if (dt.TotalHours > 1)
-                            Console.Write("[{0:d2} h, {1:d2} m]", dt.Hours, dt.Minutes);
+                            Console.Write("[{0} h, {1} m]", dt.Hours, dt.Minutes);
                         else if (dt.TotalMinutes > 1)
-                            Console.Write("[{0:d2} m, {1:d2} s]", dt.Minutes, dt.Seconds);
+                            Console.Write("[{0} m, {1} s]", dt.Minutes, dt.Seconds);
                         else if (dt.TotalSeconds > 1)
-                            Console.Write("[{0:d2} s, {1:d3} ms]", dt.Seconds, dt.Milliseconds);
+                            Console.Write("[{0} s, {1} ms]", dt.Seconds, dt.Milliseconds);
                         else
-                            Console.Write("[{0:d3} ms]", dt.Milliseconds);
+                            Console.Write("[{0} ms]", dt.Milliseconds);
 
                         Console.ResetColor();
                     }

@@ -56,15 +56,6 @@ namespace DistributedTrace.ServiceModel.Client
         /// <param name="correlationState"></param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            var buffer = reply.CreateBufferedCopy(int.MaxValue);
-
-            using (var fs = new FileStream("1.xml", FileMode.Create, FileAccess.Write))
-            using (var m = buffer.CreateMessage())
-            using (var wr = XmlWriter.Create(fs))
-                m.WriteMessage(wr);
-
-            reply = buffer.CreateMessage();
-
             var callScope = correlationState as TraceContextScope;
             if (callScope == null) return;
             try
