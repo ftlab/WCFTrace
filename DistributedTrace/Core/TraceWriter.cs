@@ -27,7 +27,9 @@ namespace DistributedTrace.Core
 
             lock (this)
             {
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine(id.ToString());
+                Console.ResetColor();
 
                 @event.Visit((e, level, index) =>
                 {
@@ -58,7 +60,11 @@ namespace DistributedTrace.Core
                     }
 
                     if (level == 0 && index == 0 && e.Different != null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write("[{0}]", e.Different.Value.GetDisplayText());
+                        Console.ResetColor();
+                    }
 
                     Console.WriteLine();
                 });

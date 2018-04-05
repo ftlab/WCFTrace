@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Core\TraceContext.cs~RF41f4ceae.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Configuration" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>

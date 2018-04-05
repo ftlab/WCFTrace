@@ -1,5 +1,6 @@
 ﻿using DistributedTrace.Core;
 using System;
+using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
@@ -7,10 +8,15 @@ using System.ServiceModel.Dispatcher;
 namespace DistributedTrace.ServiceModel.Service
 {
     /// <summary>
-    /// Инспектор сообщения обработки трассировки
+    /// Инспектор сервисного поведения формирования удаленной трассировки
     /// </summary>
     public class TraceMessageInspector : IDispatchMessageInspector
     {
+        /// <summary>
+        /// Текущее доменное имя машины
+        /// </summary>
+        public static string DN = Dns.GetHostName();
+
         /// <summary>
         /// После принятия запроса если присутствует флаг TraceMe, создаем окружение трассировки
         /// </summary>
@@ -20,7 +26,7 @@ namespace DistributedTrace.ServiceModel.Service
         /// <returns></returns>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, Namespace.Value);
+            var index = request.Headers.FindHeader(TraceMeHeader.HeaderName, Namespace.Main);
             if (index < 0) return null;
 
             var header = request.Headers.GetHeader<TraceMeHeader>(index);
@@ -28,6 +34,7 @@ namespace DistributedTrace.ServiceModel.Service
 
             var @event = TraceEvent.Create(
                 id: header.Id
+                , source: DN
                 , message: instanceContext.Host.Description.Name
                 , type: "disp");
 
@@ -52,7 +59,7 @@ namespace DistributedTrace.ServiceModel.Service
                 var @event = ctx.Root;
                 @event.SetEnd(scope.Id);
 
-                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, Namespace.Value);
+                var index = reply.Headers.FindHeader(TraceHeader.HeaderName, Namespace.Main);
                 if (index > -1)
                     reply.Headers.RemoveAt(index);
 
@@ -63,7 +70,7 @@ namespace DistributedTrace.ServiceModel.Service
                 };
 
                 var header = MessageHeader.CreateHeader(
-                    TraceHeader.HeaderName, Namespace.Value
+                    TraceHeader.HeaderName, Namespace.Main
                     , traceHeader);
 
                 reply.Headers.Add(header);

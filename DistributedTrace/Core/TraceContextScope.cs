@@ -23,10 +23,11 @@ namespace DistributedTrace.Core
         private TraceContextScope _saved;
 
         /// <summary>
-        /// Конструктор
+        /// Окружение контекста трассировки
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="mode"></param>
+        /// <param name="id">идентификатор трассировки</param>
+        /// <param name="root">корневое событие</param>
+        /// <param name="mode">режим трассировки</param>
         public TraceContextScope(TraceId id
             , TraceEvent root
             , TraceContextMode mode)
@@ -42,10 +43,12 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
-        /// Конструктор
+        /// Окружение контекста трассировки
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="eventName">имя события</param>
         /// <param name="mode"></param>
+        /// <param name="source">источник события</param>
+        /// <param name="type">тип события</param>
         public TraceContextScope(string eventName
             , TraceContextMode mode = TraceContextMode.Add
             , string source = null
@@ -63,7 +66,7 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
-        /// Идентификатор
+        /// Идентификатор трассировки
         /// </summary>
         public TraceId Id { get; private set; }
 

@@ -8,18 +8,25 @@ namespace DistributedTrace.Core
     public class TraceContext
     {
         /// <summary>
-        /// событие трассировки
+        /// корневое событие трассировки
         /// </summary>
         private readonly TraceEvent _root;
 
+        /// <summary>
+        /// идентикатор трассировки
+        /// </summary>
         private readonly TraceId _id;
 
-        public EventHandler<OnTraceEventArgs> OnEvent;
+        /// <summary>
+        /// событие добавления события в контекст трассировки
+        /// </summary>
+        public EventHandler<OnAppendEventArgs> OnEvent;
 
         /// <summary>
-        /// Конструктор
+        /// Контекст трассировки
         /// </summary>
-        /// <param name="event"></param>
+        /// <param name="id">идентификатор трассировки</param>
+        /// <param name="root">корневое событие трассировки</param>
         internal TraceContext(TraceId id
             , TraceEvent root)
         {
@@ -28,10 +35,13 @@ namespace DistributedTrace.Core
             _root = root;
         }
 
+        /// <summary>
+        /// Идентификатор трассировки
+        /// </summary>
         public TraceId Id { get { return _id; } }
 
         /// <summary>
-        /// Корневая запись трассировки
+        /// Корневое событие трассировки
         /// </summary>
         public TraceEvent Root { get { return _root; } }
 
@@ -50,30 +60,27 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
-        /// Добавить строку
+        /// Добавить событие
         /// </summary>
-        /// <param name="event"></param>
+        /// <param name="event">событие</param>
         internal virtual void AppendEvent(TraceEvent @event)
         {
             Root.AppendEvent(@event);
 
             var h = OnEvent;
             if (h != null)
-                h(this, new OnTraceEventArgs(@event));
+                h(this, new OnAppendEventArgs(@event));
         }
 
         /// <summary>
-        /// Добавить строку
+        /// Добавить событие
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="type"></param>
-        /// <param name="source"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
+        /// <param name="message">сообщение</param>
+        /// <param name="type">тип</param>
+        /// <param name="source">источник</param>
         public static void AppendEvent(string message
             , string type = null
-            , string source = null
-            , DateTime? start = null, DateTime? end = null)
+            , string source = null)
         {
             var current = Current;
 
@@ -85,55 +92,43 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
-        /// Добавить информацию
+        /// Добавить информационное событие
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="source"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        public static void AppendInfo(string info, string source = null, DateTime? start = null, DateTime? end = null)
+        /// <param name="info">информация</param>
+        /// <param name="source">источник</param>
+        public static void AppendInfo(string info, string source = null)
         {
-            AppendEvent(message: info, type: "I", source: source
-                , start: start, end: end);
+            AppendEvent(message: info, type: "I", source: source);
         }
 
         /// <summary>
-        /// Добавить предупреждение
+        /// Добавить событие о предупреждении
         /// </summary>
-        /// <param name="warn"></param>
-        /// <param name="source"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        public static void AppendWarn(string warn, string source = null, DateTime? start = null, DateTime? end = null)
+        /// <param name="warn">предупреждение</param>
+        /// <param name="source">источник</param>
+        public static void AppendWarn(string warn, string source = null)
         {
-            AppendEvent(message: warn, type: "W", source: source
-                , start: start, end: end);
+            AppendEvent(message: warn, type: "W", source: source);
         }
 
         /// <summary>
-        /// Добавить ошибку
+        /// Добавить событие об ошибке
         /// </summary>
-        /// <param name="error"></param>
-        /// <param name="source"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        public static void AppendError(string error, string source = null, DateTime? start = null, DateTime? end = null)
+        /// <param name="error">ошибка</param>
+        /// <param name="source">источник</param>
+        public static void AppendError(string error, string source = null)
         {
-            AppendEvent(message: error, type: "E", source: source
-                , start: start, end: end);
+            AppendEvent(message: error, type: "E", source: source);
         }
 
         /// <summary>
-        /// Добавить ошибку
+        /// Добавить событие об ошибке
         /// </summary>
-        /// <param name="exception"></param>
-        /// <param name="source"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        public static void AppendError(Exception exception, string source = null, DateTime? start = null, DateTime? end = null)
+        /// <param name="exception">исключение</param>
+        /// <param name="source">источник</param>
+        public static void AppendError(Exception exception, string source = null)
         {
-            AppendError(error: exception.GetType().Name, source: source
-                , start: start, end: end);
+            AppendError(error: exception.GetType().Name, source: source);
         }
     }
 }

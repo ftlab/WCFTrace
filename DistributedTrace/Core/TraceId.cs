@@ -6,9 +6,12 @@ namespace DistributedTrace.Core
     /// <summary>
     /// Идентификатор трассировки
     /// </summary>
-    [DataContract(Name = "traceid", Namespace = Namespace.Value)]
+    [DataContract(Name = "traceid", Namespace = Namespace.Main)]
     public class TraceId
     {
+        /// <summary>
+        /// Идентификатор трассировки
+        /// </summary>
         private TraceId() { }
 
         /// <summary>
@@ -23,6 +26,9 @@ namespace DistributedTrace.Core
         [DataMember(Name = "name", Order = 1)]
         public string Name { get; private set; }
 
+        /// <summary>
+        /// Дата и время создания трассировки
+        /// </summary>
         [DataMember(Name = "ts", Order = 2)]
         public DateTime Timestamp { get; private set; }
 
@@ -60,10 +66,22 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
+        /// Создать событие
+        /// </summary>
+        /// <param name="message">сообщение</param>
+        /// <param name="source">источник</param>
+        /// <param name="type">тип события</param>
+        /// <returns></returns>
+        public TraceEvent CreateEvent(string message, string source = null, string type = null)
+        {
+            return TraceEvent.Create(this, message, source, type);
+        }
+
+        /// <summary>
         /// Создание идентификатора трассировки
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name"></param>
+        /// <param name="id">уникальный номер</param>
+        /// <param name="name">наименование</param>
         /// <returns></returns>
         public static TraceId Create(string id, string name)
         {
@@ -78,7 +96,7 @@ namespace DistributedTrace.Core
         /// <summary>
         /// Создание идентификатора трассировки
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">наименование</param>
         /// <returns></returns>
         public static TraceId Create(string name)
         {
@@ -91,7 +109,7 @@ namespace DistributedTrace.Core
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[{0}, {1}, {2: yyyy-MM-dd HH:mm:ss}]", Name, Id, Timestamp.ToLocalTime());
+            return string.Format("[{0}, {1}, {2:yyyy-MM-dd HH:mm:ss}]", Name, Id, Timestamp.ToLocalTime());
         }
     }
 }

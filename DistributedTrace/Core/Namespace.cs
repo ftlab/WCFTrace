@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DistributedTrace.Core
+﻿namespace DistributedTrace.Core
 {
+    /// <summary>
+    /// Пространство имен
+    /// </summary>
     public static class Namespace
     {
-        public const string Value = "http://fintech.ru/distributedtrace";
+        /// <summary>
+        /// Пространство имен
+        /// </summary>
+        public const string Main = "http://fintech.ru/distributedtrace";
     }
 }

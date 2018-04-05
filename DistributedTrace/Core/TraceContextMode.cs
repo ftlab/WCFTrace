@@ -6,7 +6,7 @@
     public enum TraceContextMode
     {
         /// <summary>
-        /// Используем NullTrace
+        /// Используем Null устройстов
         /// </summary>
         None = 0,
         /// <summary>

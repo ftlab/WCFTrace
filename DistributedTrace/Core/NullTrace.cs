@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DistributedTrace.Core
+﻿namespace DistributedTrace.Core
 {
     /// <summary>
     /// Null устройство
@@ -13,7 +11,7 @@ namespace DistributedTrace.Core
         public static NullTrace Instance = new NullTrace();
 
         /// <summary>
-        /// Конструктор
+        /// Null устройство
         /// </summary>
         private NullTrace() : base(TraceId.Create("NULL")
             , null)
@@ -21,9 +19,9 @@ namespace DistributedTrace.Core
         }
 
         /// <summary>
-        /// Добавить строку
+        /// Добавить событие
         /// </summary>
-        /// <param name="event"></param>
+        /// <param name="event">событие трассировки</param>
         internal override void AppendEvent(TraceEvent @event)
         {
 

@@ -8,14 +8,26 @@ using System.ServiceModel.Dispatcher;
 namespace DistributedTrace.ServiceModel.Service
 {
     /// <summary>
-    /// Поведение для трассировки сервиса
+    /// Сервисное поведения формирования трассировки
     /// </summary>
     public class TraceBehavior : Attribute, IServiceBehavior
     {
+        /// <summary>
+        /// Добавить параметры привязки
+        /// </summary>
+        /// <param name="serviceDescription"></param>
+        /// <param name="serviceHostBase"></param>
+        /// <param name="endpoints"></param>
+        /// <param name="bindingParameters"></param>
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
         {
         }
 
+        /// <summary>
+        /// Применить поведение обработки
+        /// </summary>
+        /// <param name="serviceDescription"></param>
+        /// <param name="serviceHostBase"></param>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
             foreach (ChannelDispatcher chDisp in serviceHostBase.ChannelDispatchers)
@@ -27,6 +39,11 @@ namespace DistributedTrace.ServiceModel.Service
             }
         }
 
+        /// <summary>
+        /// Валидация применения поведения
+        /// </summary>
+        /// <param name="serviceDescription"></param>
+        /// <param name="serviceHostBase"></param>
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
         }
