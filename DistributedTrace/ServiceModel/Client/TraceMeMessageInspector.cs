@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Text;
 using System.Xml;
@@ -16,6 +17,10 @@ namespace DistributedTrace.ServiceModel.Client
     /// </summary>
     public class TraceMeMessageInspector : IClientMessageInspector
     {
+        public TraceMeMessageInspector()
+        {
+        }
+
         /// <summary>
         /// Перед отправкой сообщения включаем в заголовок информацию о текущей трассировке
         /// </summary>

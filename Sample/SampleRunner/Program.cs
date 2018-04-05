@@ -36,6 +36,8 @@ namespace SampleRunner
 
                 using (var hello = new HelloClient())
                     hello.Hello();
+
+                var txt = scope.Root.ToString();
             }
 
             Console.WriteLine("Press any key to exit...");

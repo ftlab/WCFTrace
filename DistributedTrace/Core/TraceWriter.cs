@@ -34,7 +34,7 @@ namespace DistributedTrace.Core
                     string pref = new string(' ', level * 2);
                     Console.Write(pref);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("[{0:HH:mm:ss}] ", e.GetBeginDateTime(id).ToLocalTime());
+                    Console.Write("[{0:HH:mm:ss}] ", e.GetBeginDateTime(id));
 
                     Console.ResetColor();
                     if (string.IsNullOrEmpty(e.Type) == false)
@@ -52,19 +52,13 @@ namespace DistributedTrace.Core
                         else
                             Console.ForegroundColor = ConsoleColor.Yellow;
 
-                        if (dt.TotalDays > 1)
-                            Console.Write("[{0} d, {1} h]", dt.Days, dt.Hours);
-                        else if (dt.TotalHours > 1)
-                            Console.Write("[{0} h, {1} m]", dt.Hours, dt.Minutes);
-                        else if (dt.TotalMinutes > 1)
-                            Console.Write("[{0} m, {1} s]", dt.Minutes, dt.Seconds);
-                        else if (dt.TotalSeconds > 1)
-                            Console.Write("[{0} s, {1} ms]", dt.Seconds, dt.Milliseconds);
-                        else
-                            Console.Write("[{0} ms]", dt.Milliseconds);
+                        Console.Write("[{0}]", dt.GetDisplayText());
 
                         Console.ResetColor();
                     }
+
+                    if (level == 0 && index == 0 && e.Different != null)
+                        Console.Write("[{0}]", e.Different.Value.GetDisplayText());
 
                     Console.WriteLine();
                 });

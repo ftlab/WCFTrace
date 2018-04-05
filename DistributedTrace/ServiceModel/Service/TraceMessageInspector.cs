@@ -29,7 +29,6 @@ namespace DistributedTrace.ServiceModel.Service
             var @event = TraceEvent.Create(
                 id: header.Id
                 , message: instanceContext.Host.Description.Name
-                //, source: channel.RemoteAddress.ToString()
                 , type: "disp");
 
             return new TraceContextScope(header.Id, @event, TraceContextMode.Add);
