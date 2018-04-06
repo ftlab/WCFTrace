@@ -1,7 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35</TargetFrameworks>
+    <TargetFrameworks>net35;net462;net452</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>Fintech</Company>
+    <Version>1.0.0</Version>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>Distributed Trace FTLab Fintech</PackageTags>
+    <RepositoryType />
+    <RepositoryUrl></RepositoryUrl>
+    <Description>Distributed Trace</Description>
+    <Authors>FTLab</Authors>
+    <PackageProjectUrl>https://github.com/ftlab/WCFTrace</PackageProjectUrl>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DistributedTrace.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
