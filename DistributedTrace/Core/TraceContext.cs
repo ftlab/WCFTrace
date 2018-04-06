@@ -33,6 +33,8 @@ namespace DistributedTrace.Core
             if (id == null) throw new ArgumentNullException("id");
             _id = id;
             _root = root;
+            if (_root == null)
+                _root = id.CreateEvent(id.Name);
         }
 
         /// <summary>

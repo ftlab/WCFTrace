@@ -39,7 +39,7 @@ namespace DistributedTrace.Core
         /// Сообщение
         /// </summary>
         [DataMember(Name = "m", Order = 3, EmitDefaultValue = false)]
-        public string Message { get; private set; }
+        public string Message { get; set; }
 
         /// <summary>
         /// Источник
@@ -88,6 +88,21 @@ namespace DistributedTrace.Core
                     return TimeSpan.Zero;
 
                 return Duration - TimeSpan.FromMilliseconds(Events.Sum(e => (e.End - e.Begin) ?? 0));
+            }
+        }
+
+        public TimeSpan? SumDiff
+        {
+            get
+            {
+                if (Events == null || Events.Count == 0)
+                    return Different;
+
+                var r = Different ?? TimeSpan.Zero;
+                foreach (var e in Events)
+                    r = r + (e.SumDiff ?? TimeSpan.Zero);
+
+                return r;
             }
         }
 
@@ -233,18 +248,25 @@ namespace DistributedTrace.Core
 
             sb.Append(id.ToString());
 
+            var prev = default(DateTime);
+
             Visit((e, level, index) =>
             {
                 sb.AppendLine();
                 sb.Append(new String(' ', level * 2));
 
-                sb.AppendFormat("[{0:HH:mm:ss}] ", e.GetBeginDateTime(id));
+                var bdt = e.GetBeginDateTime(id);
+                if ((bdt - prev).TotalSeconds > 1)
+                {
+                    sb.AppendFormat("[{0:HH:mm:ss}] ", bdt);
+                    prev = bdt;
+                }
 
                 if (string.IsNullOrEmpty(e.Type) == false)
                     sb.AppendFormat("{0}> ", e.Type);
 
                 if (string.IsNullOrEmpty(e.Source) == false)
-                    sb.AppendFormat("{0}: ", e.Type);
+                    sb.AppendFormat("{0}: ", e.Source);
 
                 if (string.IsNullOrEmpty(e.Message) == false)
                     sb.AppendFormat("{0} ", e.Message);
@@ -252,8 +274,15 @@ namespace DistributedTrace.Core
                 if (e.Duration != null)
                     sb.AppendFormat("[{0}] ", e.Duration.Value.GetDisplayText());
 
-                if (level == 0 && index == 0 && e.Different != null)
+                if (e.Different != null)
                     sb.AppendFormat("[{0}] ", e.Different.Value.GetDisplayText());
+
+                if (level == 0 && index == 0 && e.SumDiff != null)
+                {
+                    var sd = e.SumDiff;
+                    if (sd != null)
+                        sb.AppendFormat("[{0}] ", sd.Value.GetDisplayText());
+                }
             });
         }
     }

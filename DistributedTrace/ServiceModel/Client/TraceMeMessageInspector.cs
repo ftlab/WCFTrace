@@ -21,9 +21,12 @@ namespace DistributedTrace.ServiceModel.Client
             var scope = TraceContextScope.Current;
             if (scope == null) return null;
 
+            var action = request.Headers.Action;
+            action = action.Replace("http://tempuri.org/", "");
+
             var id = scope.Id;
             var @event = TraceEvent.Create(id: id
-                , message: request.Headers.Action
+                , message: action
                 , type: "call");
 
             var callScope = new TraceContextScope(id, @event, TraceContextMode.Add);

@@ -13,8 +13,8 @@
         /// <summary>
         /// Null устройство
         /// </summary>
-        private NullTrace() : base(TraceId.Create("NULL")
-            , null)
+        private NullTrace()
+            : base(TraceId.Create("NULL"), null)
         {
         }
 

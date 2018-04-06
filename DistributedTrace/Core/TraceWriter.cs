@@ -31,12 +31,20 @@ namespace DistributedTrace.Core
                 Console.WriteLine(id.ToString());
                 Console.ResetColor();
 
+                DateTime prev = default(DateTime);
+
                 @event.Visit((e, level, index) =>
                 {
                     string pref = new string(' ', level * 2);
                     Console.Write(pref);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("[{0:HH:mm:ss}] ", e.GetBeginDateTime(id));
+
+                    var bdt = e.GetBeginDateTime(id);
+                    if ((bdt - prev).TotalSeconds > 1)
+                    {
+                        Console.Write("[{0:HH:mm:ss}] ", bdt);
+                        prev = bdt;
+                    }
 
                     Console.ResetColor();
                     if (string.IsNullOrEmpty(e.Type) == false)
@@ -53,15 +61,13 @@ namespace DistributedTrace.Core
                             Console.ForegroundColor = ConsoleColor.Red;
                         else
                             Console.ForegroundColor = ConsoleColor.Yellow;
-
                         Console.Write("[{0}]", dt.GetDisplayText());
-
                         Console.ResetColor();
                     }
 
-                    if (level == 0 && index == 0 && e.Different != null)
+                    if (e.Different != null)
                     {
-                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.Write("[{0}]", e.Different.Value.GetDisplayText());
                         Console.ResetColor();
                     }
