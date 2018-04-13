@@ -79,17 +79,14 @@ namespace DistributedTrace.Core
         /// </summary>
         /// <param name="message">сообщение</param>
         /// <param name="type">тип</param>
-        /// <param name="source">источник</param>
         public static void AppendEvent(string message
-            , string type = null
-            , string source = null)
+            , string type = null)
         {
             var current = Current;
 
             current.AppendEvent(TraceEvent.Create(
                 current.Id
                 , message
-                , source
                 , type));
         }
 
@@ -97,40 +94,36 @@ namespace DistributedTrace.Core
         /// Добавить информационное событие
         /// </summary>
         /// <param name="info">информация</param>
-        /// <param name="source">источник</param>
-        public static void AppendInfo(string info, string source = null)
+        public static void AppendInfo(string info)
         {
-            AppendEvent(message: info, type: "I", source: source);
+            AppendEvent(message: info, type: "I");
         }
 
         /// <summary>
         /// Добавить событие о предупреждении
         /// </summary>
         /// <param name="warn">предупреждение</param>
-        /// <param name="source">источник</param>
-        public static void AppendWarn(string warn, string source = null)
+        public static void AppendWarn(string warn)
         {
-            AppendEvent(message: warn, type: "W", source: source);
+            AppendEvent(message: warn, type: "W");
         }
 
         /// <summary>
         /// Добавить событие об ошибке
         /// </summary>
         /// <param name="error">ошибка</param>
-        /// <param name="source">источник</param>
-        public static void AppendError(string error, string source = null)
+        public static void AppendError(string error)
         {
-            AppendEvent(message: error, type: "E", source: source);
+            AppendEvent(message: error, type: "E");
         }
 
         /// <summary>
         /// Добавить событие об ошибке
         /// </summary>
         /// <param name="exception">исключение</param>
-        /// <param name="source">источник</param>
-        public static void AppendError(Exception exception, string source = null)
+        public static void AppendError(Exception exception)
         {
-            AppendError(error: exception.GetType().Name, source: source);
+            AppendError(error: exception.GetType().Name);
         }
     }
 }

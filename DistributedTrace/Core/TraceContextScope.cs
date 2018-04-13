@@ -47,11 +47,9 @@ namespace DistributedTrace.Core
         /// </summary>
         /// <param name="eventName">имя события</param>
         /// <param name="mode"></param>
-        /// <param name="source">источник события</param>
         /// <param name="type">тип события</param>
         public TraceContextScope(string eventName
             , TraceContextMode mode = TraceContextMode.Add
-            , string source = null
             , string type = null)
         {
             if (Current != null)
@@ -59,7 +57,7 @@ namespace DistributedTrace.Core
             else
                 Id = TraceId.Create(eventName);
 
-            Root = TraceEvent.Create(Id, eventName, source, type);
+            Root = TraceEvent.Create(id: Id, message: eventName, type: type);
             Mode = mode;
 
             PushScope();

@@ -69,12 +69,11 @@ namespace DistributedTrace.Core
         /// Создать событие
         /// </summary>
         /// <param name="message">сообщение</param>
-        /// <param name="source">источник</param>
         /// <param name="type">тип события</param>
         /// <returns></returns>
-        public TraceEvent CreateEvent(string message, string source = null, string type = null)
+        public TraceEvent CreateEvent(string message, string type = null)
         {
-            return TraceEvent.Create(this, message, source, type);
+            return TraceEvent.Create(id: this, message: message, type: type);
         }
 
         /// <summary>

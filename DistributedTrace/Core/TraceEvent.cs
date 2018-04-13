@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -10,8 +11,15 @@ namespace DistributedTrace.Core
     /// Событие трассировки
     /// </summary>
     [DataContract(Name = "ev", Namespace = Namespace.Main)]
-    public class TraceEvent
+    public partial class TraceEvent
     {
+        private static string CurrentSource;
+
+        static TraceEvent()
+        {
+            CurrentSource = Dns.GetHostName();
+        }
+
         /// <summary>
         /// Событие трассировки
         /// </summary>
@@ -39,7 +47,7 @@ namespace DistributedTrace.Core
         /// Сообщение
         /// </summary>
         [DataMember(Name = "m", Order = 3, EmitDefaultValue = false)]
-        public string Message { get; set; }
+        public string Message { get; private set; }
 
         /// <summary>
         /// Источник
@@ -91,7 +99,7 @@ namespace DistributedTrace.Core
             }
         }
 
-        public TimeSpan? SumDiff
+        public TimeSpan? TotalDiff
         {
             get
             {
@@ -100,7 +108,7 @@ namespace DistributedTrace.Core
 
                 var r = Different ?? TimeSpan.Zero;
                 foreach (var e in Events)
-                    r = r + (e.SumDiff ?? TimeSpan.Zero);
+                    r = r + (e.TotalDiff ?? TimeSpan.Zero);
 
                 return r;
             }
@@ -132,12 +140,10 @@ namespace DistributedTrace.Core
         /// </summary>
         /// <param name="id">идентификатор трассировки</param>
         /// <param name="message">сообщение</param>
-        /// <param name="source">источник</param>
         /// <param name="type">тип события</param>
         /// <returns></returns>
         public static TraceEvent Create(TraceId id
             , string message
-            , string source = null
             , string type = null)
         {
             var begin = (int)Math.Ceiling((DateTime.UtcNow - id.Timestamp).TotalMilliseconds);
@@ -145,7 +151,7 @@ namespace DistributedTrace.Core
             {
                 Begin = begin,
                 Message = message,
-                Source = source,
+                Source = CurrentSource,
                 Type = type
             };
 
@@ -178,31 +184,6 @@ namespace DistributedTrace.Core
             return this;
         }
 
-        /// <summary>
-        /// Посетить событие
-        /// </summary>
-        /// <param name="onEvent">обработчик посещения</param>
-        public void Visit(Action<TraceEvent, int, int> onEvent)
-        {
-            if (onEvent == null) return;
-
-            VisitTree(onEvent, 0, 0);
-        }
-
-        /// <summary>
-        /// рекурсивное посещение события
-        /// </summary>
-        /// <param name="onEvent">обработчик посещения</param>
-        /// <param name="level">уровень</param>
-        /// <param name="pos">позиция</param>
-        private void VisitTree(Action<TraceEvent, int, int> onEvent, int level, int pos)
-        {
-            onEvent(this, level, pos);
-
-            if (Events != null)
-                for (int i = 0; i < Events.Count; i++)
-                    Events[i].VisitTree(onEvent, level + 1, i);
-        }
 
         /// <summary>
         /// Отображаемый текст события
@@ -210,80 +191,7 @@ namespace DistributedTrace.Core
         /// <returns></returns>
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            WriteTo(sb);
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Запись события
-        /// </summary>
-        /// <param name="sb">построитель строки</param>
-        public void WriteTo(StringBuilder sb)
-        {
-            Visit((e, level, index) =>
-            {
-                if (level != 0)
-                    sb.AppendLine();
-
-                sb.AppendFormat("{0}t: {1}, s: {2}, m: {3}, b: {4}, e: {5}", new String(' ', level * 2)
-                    , e.Type, e.Source, e.Message
-                    , e.BeginTime.GetDisplayText()
-                    , e.EndTime == null ? null : e.EndTime.Value.GetDisplayText());
-            });
-        }
-
-        /// <summary>
-        /// Запись события
-        /// </summary>
-        /// <param name="sb">построитель строки</param>
-        /// <param name="id">идентификатор трассировки</param>
-        public void WriteTo(StringBuilder sb, TraceId id)
-        {
-            if (id == null)
-            {
-                WriteTo(sb);
-                return;
-            }
-
-            sb.Append(id.ToString());
-
-            var prev = default(DateTime);
-
-            Visit((e, level, index) =>
-            {
-                sb.AppendLine();
-                sb.Append(new String(' ', level * 2));
-
-                var bdt = e.GetBeginDateTime(id);
-                if ((bdt - prev).TotalSeconds > 1)
-                {
-                    sb.AppendFormat("[{0:HH:mm:ss}] ", bdt);
-                    prev = bdt;
-                }
-
-                if (string.IsNullOrEmpty(e.Type) == false)
-                    sb.AppendFormat("{0}> ", e.Type);
-
-                if (string.IsNullOrEmpty(e.Source) == false)
-                    sb.AppendFormat("{0}: ", e.Source);
-
-                if (string.IsNullOrEmpty(e.Message) == false)
-                    sb.AppendFormat("{0} ", e.Message);
-
-                if (e.Duration != null)
-                    sb.AppendFormat("[{0}] ", e.Duration.Value.GetDisplayText());
-
-                if (e.Different != null)
-                    sb.AppendFormat("[{0}] ", e.Different.Value.GetDisplayText());
-
-                if (level == 0 && index == 0 && e.SumDiff != null)
-                {
-                    var sd = e.SumDiff;
-                    if (sd != null)
-                        sb.AppendFormat("[{0}] ", sd.Value.GetDisplayText());
-                }
-            });
+            return string.Format("{0}", Message);
         }
     }
 }

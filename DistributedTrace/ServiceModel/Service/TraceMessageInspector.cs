@@ -13,11 +13,6 @@ namespace DistributedTrace.ServiceModel.Service
     public class TraceMessageInspector : IDispatchMessageInspector
     {
         /// <summary>
-        /// Текущее доменное имя машины
-        /// </summary>
-        public static string DN = Dns.GetHostName();
-
-        /// <summary>
         /// После принятия запроса если присутствует флаг TraceMe, создаем окружение трассировки
         /// </summary>
         /// <param name="request"></param>
@@ -34,7 +29,6 @@ namespace DistributedTrace.ServiceModel.Service
 
             var @event = TraceEvent.Create(
                 id: header.Id
-                , source: DN
                 , message: instanceContext.Host.Description.Name
                 , type: "disp");
 
@@ -62,6 +56,8 @@ namespace DistributedTrace.ServiceModel.Service
                 var index = reply.Headers.FindHeader(TraceHeader.HeaderName, Namespace.Main);
                 if (index > -1)
                     reply.Headers.RemoveAt(index);
+
+                //@event.Cleanup();
 
                 var traceHeader = new TraceHeader()
                 {

@@ -1,11 +1,7 @@
 ﻿using Contracts;
 using DistributedTrace.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HelloApp
 {
@@ -22,6 +18,8 @@ namespace HelloApp
             using (var dbscope = new TraceContextScope("бд"))
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
+
+                TraceContext.AppendWarn("db end");
             }
 
             using (var echo = new EchoClient())

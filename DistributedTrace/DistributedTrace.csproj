@@ -20,4 +20,8 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Stat\" />
+  </ItemGroup>
+
 </Project>

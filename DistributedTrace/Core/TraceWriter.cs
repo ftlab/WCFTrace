@@ -33,9 +33,10 @@ namespace DistributedTrace.Core
 
                 DateTime prev = default(DateTime);
 
-                @event.Visit((e, level, index) =>
+                @event.Visit((node) =>
                 {
-                    string pref = new string(' ', level * 2);
+                    var e = node.Node;
+                    string pref = new string(' ', node.Level * 2);
                     Console.Write(pref);
                     Console.ForegroundColor = ConsoleColor.Green;
 
