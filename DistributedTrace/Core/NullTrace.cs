@@ -17,14 +17,5 @@
             : base(TraceId.Create("NULL"), null)
         {
         }
-
-        /// <summary>
-        /// Добавить событие
-        /// </summary>
-        /// <param name="event">событие трассировки</param>
-        internal override void AppendEvent(TraceEvent @event)
-        {
-
-        }
     }
 }

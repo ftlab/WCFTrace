@@ -18,19 +18,19 @@ namespace DistributedTrace.Core
         /// Уникальный номер
         /// </summary>
         [DataMember(Name = "id", Order = 0)]
-        public string Id { get; private set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Наименование
         /// </summary>
         [DataMember(Name = "name", Order = 1)]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Дата и время создания трассировки
         /// </summary>
         [DataMember(Name = "ts", Order = 2)]
-        public DateTime Timestamp { get; private set; }
+        public DateTime Timestamp { get; set; }
 
         /// <summary>
         /// Проверка на равенство
@@ -63,17 +63,6 @@ namespace DistributedTrace.Core
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
-        }
-
-        /// <summary>
-        /// Создать событие
-        /// </summary>
-        /// <param name="message">сообщение</param>
-        /// <param name="type">тип события</param>
-        /// <returns></returns>
-        public TraceEvent CreateEvent(string message, string type = null)
-        {
-            return TraceEvent.Create(id: this, message: message, type: type);
         }
 
         /// <summary>

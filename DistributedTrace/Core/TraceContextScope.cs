@@ -47,17 +47,15 @@ namespace DistributedTrace.Core
         /// </summary>
         /// <param name="eventName">имя события</param>
         /// <param name="mode"></param>
-        /// <param name="type">тип события</param>
         public TraceContextScope(string eventName
-            , TraceContextMode mode = TraceContextMode.Add
-            , string type = null)
+            , TraceContextMode mode = TraceContextMode.Add)
         {
             if (Current != null)
                 Id = Current.Id;
             else
                 Id = TraceId.Create(eventName);
 
-            Root = TraceEvent.Create(id: Id, message: eventName, type: type);
+            Root = TraceEvent.Create(id: Id, name: eventName);
             Mode = mode;
 
             PushScope();
@@ -172,7 +170,7 @@ namespace DistributedTrace.Core
                 TraceWriter.Default.Write(Id, Context.Root);
 
             if (RequiredAdd)
-                _saved.Context.AppendEvent(Context.Root);
+                _saved.Context.Root.AddEvent(Context.Root);
 
             PopScope();
             _disposed = true;

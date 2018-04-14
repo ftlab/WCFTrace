@@ -37,43 +37,58 @@ namespace DistributedTrace.Core
             this T root
             , Func<T, IEnumerable<T>> getChilds)
         {
-            return root.Flatten(getChilds, level: 0, position: 0);
+            return root.Flatten(getChilds, parent: null, prev: null);
         }
 
         /// <summary>
         /// развернуть дерево
         /// </summary>
-        /// <typeparam name="T">тип узла</typeparam>
-        /// <param name="root">узел</param>
+        /// <typeparam name="T">тип значения</typeparam>
+        /// <param name="value">значение</param>
         /// <param name="getChilds">получить дочерние узлы</param>
-        /// <param name="level">уровень</param>
-        /// <param name="position">позиция</param>
+        /// <param name="parent">родитель</param>
+        /// <param name="prev">предыдущий</param>
         /// <returns></returns>
         private static IEnumerable<TreeNode<T>> Flatten<T>(
-            this T root
+            this T value
             , Func<T, IEnumerable<T>> getChilds
-            , int level
-            , int position)
+            , TreeNode<T> parent
+            , TreeNode<T> prev)
         {
-            if (root == null) throw new ArgumentNullException("root");
+            if (value == null) throw new ArgumentNullException("node");
             if (getChilds == null) throw new ArgumentNullException("getChilds");
 
-            yield return new TreeNode<T>()
+            int level = 0;
+            if (parent != null)
+                level = parent.Level + 1;
+            int position = 0;
+            if (prev != null)
+                position = prev.Position + 1;
+
+
+            var next = new TreeNode<T>()
             {
-                Node = root,
+                Value = value,
                 Level = level,
                 Position = position,
+                Parent = parent,
+                Prev = prev,
             };
 
-            var childs = getChilds(root);
+            yield return next;
+
+            var childs = getChilds(value);
             if (childs == null) yield break;
 
-            int i = 0;
+            parent = next;
+            prev = null;
             foreach (var child in childs)
             {
-                foreach (var rc in Flatten(child, getChilds, level + 1, i))
+                foreach (var rc in Flatten(child, getChilds, parent, prev))
+                {
                     yield return rc;
-                i++;
+                    prev = rc;
+                }
             }
         }
     }

@@ -13,177 +13,45 @@ namespace DistributedTrace.Core
     [DataContract(Name = "ev", Namespace = Namespace.Main)]
     public partial class TraceEvent
     {
-        private static string CurrentSource;
-
-        static TraceEvent()
-        {
-            CurrentSource = Dns.GetHostName();
-        }
-
         /// <summary>
-        /// Событие трассировки
+        /// Имя события
         /// </summary>
-        private TraceEvent() { }
+        [DataMember(Name = "n", Order = 0)]
+        private string _name;
 
         /// <summary>
         /// Время начала события в мс
         /// </summary>
-        [DataMember(Name = "b", Order = 0)]
-        private int Begin { get; set; }
+        [DataMember(Name = "b", Order = 1)]
+        private int _begin;
 
         /// <summary>
         /// Время окончания события в мс
         /// </summary>
-        [DataMember(Name = "e", Order = 1, EmitDefaultValue = false)]
-        private int? End { get; set; }
-
-        /// <summary>
-        /// Тип сообщения
-        /// </summary>
-        [DataMember(Name = "t", Order = 2, EmitDefaultValue = false)]
-        public string Type { get; private set; }
-
-        /// <summary>
-        /// Сообщение
-        /// </summary>
-        [DataMember(Name = "m", Order = 3, EmitDefaultValue = false)]
-        public string Message { get; private set; }
-
-        /// <summary>
-        /// Источник
-        /// </summary>
-        [DataMember(Name = "s", Order = 4, EmitDefaultValue = false)]
-        public string Source { get; private set; }
+        [DataMember(Name = "e", Order = 2, EmitDefaultValue = false)]
+        private int? _end;
 
         /// <summary>
         /// Вложенные события
         /// </summary>
         [DataMember(Name = "es", Order = 5, EmitDefaultValue = false)]
-        public List<TraceEvent> Events { get; private set; }
+        private List<TraceEvent> _events;
+
 
         /// <summary>
-        /// Время начала события
+        /// Свойства события
         /// </summary>
-        public TimeSpan BeginTime { get { return TimeSpan.FromMilliseconds(Begin); } }
+        [DataMember(Name = "props", Order = 6, EmitDefaultValue = false)]
+        private TraceEventProperties _properties;
 
         /// <summary>
-        /// Время окончания события
+        /// Имя события
         /// </summary>
-        public TimeSpan? EndTime { get { return End == null ? default(TimeSpan?) : TimeSpan.FromMilliseconds(End.Value); } }
-
-        /// <summary>
-        /// Длительность события
-        /// </summary>
-        public TimeSpan? Duration
+        public string Name
         {
-            get
-            {
-                if (End == null) return null;
-                return TimeSpan.FromMilliseconds(End.Value - Begin);
-            }
+            get { return _name; }
+            set { _name = value; }
         }
-
-        /// <summary>
-        /// Разница между длительностью события и длительностью вложенных событий
-        /// </summary>
-        public TimeSpan? Different
-        {
-            get
-            {
-                if (Duration == null) return null;
-
-                if (Events == null || Events.Count == 0)
-                    return TimeSpan.Zero;
-
-                return Duration - TimeSpan.FromMilliseconds(Events.Sum(e => (e.End - e.Begin) ?? 0));
-            }
-        }
-
-        public TimeSpan? TotalDiff
-        {
-            get
-            {
-                if (Events == null || Events.Count == 0)
-                    return Different;
-
-                var r = Different ?? TimeSpan.Zero;
-                foreach (var e in Events)
-                    r = r + (e.TotalDiff ?? TimeSpan.Zero);
-
-                return r;
-            }
-        }
-
-        /// <summary>
-        /// Получить дату и время начала события
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public DateTime GetBeginDateTime(TraceId id)
-        {
-            return (id.Timestamp + BeginTime).ToLocalTime();
-        }
-
-        /// <summary>
-        /// Получить дату и время окончания события
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public DateTime? GetEndDateTime(TraceId id)
-        {
-            if (End == null) return null;
-            return (id.Timestamp + EndTime.Value).ToLocalTime();
-        }
-
-        /// <summary>
-        /// Создание события
-        /// </summary>
-        /// <param name="id">идентификатор трассировки</param>
-        /// <param name="message">сообщение</param>
-        /// <param name="type">тип события</param>
-        /// <returns></returns>
-        public static TraceEvent Create(TraceId id
-            , string message
-            , string type = null)
-        {
-            var begin = (int)Math.Ceiling((DateTime.UtcNow - id.Timestamp).TotalMilliseconds);
-            var @event = new TraceEvent()
-            {
-                Begin = begin,
-                Message = message,
-                Source = CurrentSource,
-                Type = type
-            };
-
-            return @event;
-        }
-
-        /// <summary>
-        /// Установить время завершения события
-        /// </summary>
-        /// <param name="id">идентификатор трассировки</param>
-        internal void SetEnd(TraceId id)
-        {
-            End = (int)Math.Ceiling((DateTime.UtcNow - id.Timestamp).TotalMilliseconds);
-        }
-
-        /// <summary>
-        /// Добавить вложенное событие
-        /// </summary>
-        /// <param name="event"></param>
-        /// <returns></returns>
-        public TraceEvent AppendEvent(TraceEvent @event)
-        {
-            if (@event == null) throw new ArgumentNullException("event");
-
-            if (Events == null)
-                Events = new List<TraceEvent>();
-
-            Events.Add(@event);
-
-            return this;
-        }
-
 
         /// <summary>
         /// Отображаемый текст события
@@ -191,7 +59,29 @@ namespace DistributedTrace.Core
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0}", Message);
+            return string.Format("{0}{1}"
+                , Name
+                , _properties == null ? null
+                    : "(" + _properties.ToString() + ")");
+        }
+
+        /// <summary>
+        /// Создание события
+        /// </summary>
+        /// <param name="id">идентификатор трассировки</param>
+        /// <param name="name">имя события</param>
+        /// <returns></returns>
+        public static TraceEvent Create(
+            TraceId id
+            , string name)
+        {
+            var @event = new TraceEvent()
+            {
+                BeginTime = (DateTime.UtcNow - id.Timestamp),
+                Name = name,
+            };
+
+            return @event;
         }
     }
 }

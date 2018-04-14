@@ -12,6 +12,8 @@ namespace DistributedTrace.ServiceModel.Service
     /// </summary>
     public class TraceMessageInspector : IDispatchMessageInspector
     {
+        public static string HostName = Dns.GetHostName();
+
         /// <summary>
         /// После принятия запроса если присутствует флаг TraceMe, создаем окружение трассировки
         /// </summary>
@@ -29,8 +31,9 @@ namespace DistributedTrace.ServiceModel.Service
 
             var @event = TraceEvent.Create(
                 id: header.Id
-                , message: instanceContext.Host.Description.Name
-                , type: "disp");
+                , name: "disp> " + instanceContext.Host.Description.Name);
+
+            @event["host"] = HostName;
 
             return new TraceContextScope(header.Id, @event, TraceContextMode.Add);
         }

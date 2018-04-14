@@ -10,8 +10,6 @@ namespace HelloApp
         public void Hello()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
-
-
             Console.WriteLine("Hello");
             Console.ResetColor();
 
@@ -19,7 +17,7 @@ namespace HelloApp
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
 
-                TraceContext.AppendWarn("db end");
+                TraceContext.SetProperty("cs", "connection string");
             }
 
             using (var echo = new EchoClient())

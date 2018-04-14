@@ -26,8 +26,7 @@ namespace DistributedTrace.ServiceModel.Client
 
             var id = scope.Id;
             var @event = TraceEvent.Create(id: id
-                , message: action
-                , type: "call");
+                , name: "call> " + action);
 
             var callScope = new TraceContextScope(id, @event, TraceContextMode.Add);
 
@@ -62,7 +61,7 @@ namespace DistributedTrace.ServiceModel.Client
 
                 var header = reply.Headers.GetHeader<TraceHeader>(index);
                 if (header != null && header.Root != null)
-                    callScope.Context.AppendEvent(header.Root);
+                    callScope.Context.Root.AddEvent(header.Root);
             }
             finally
             {

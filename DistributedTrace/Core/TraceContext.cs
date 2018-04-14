@@ -34,7 +34,7 @@ namespace DistributedTrace.Core
             _id = id;
             _root = root;
             if (_root == null)
-                _root = id.CreateEvent(id.Name);
+                _root = TraceEvent.Create(_id, _id.Name);
         }
 
         /// <summary>
@@ -64,66 +64,40 @@ namespace DistributedTrace.Core
         /// <summary>
         /// Добавить событие
         /// </summary>
-        /// <param name="event">событие</param>
-        internal virtual void AppendEvent(TraceEvent @event)
-        {
-            Root.AppendEvent(@event);
-
-            var h = OnEvent;
-            if (h != null)
-                h(this, new OnAppendEventArgs(@event));
-        }
-
-        /// <summary>
-        /// Добавить событие
-        /// </summary>
-        /// <param name="message">сообщение</param>
+        /// <param name="name">сообщение</param>
         /// <param name="type">тип</param>
-        public static void AppendEvent(string message
-            , string type = null)
+        public static void AddEvent(string name)
         {
             var current = Current;
 
-            current.AppendEvent(TraceEvent.Create(
-                current.Id
-                , message
-                , type));
+            var @event = TraceEvent.Create(current.Id, name);
+            current.Root.AddEvent(@event);
+
+            var h = current.OnEvent;
+            if (h != null)
+                h(current, new OnAppendEventArgs(@event));
         }
 
         /// <summary>
-        /// Добавить информационное событие
+        /// Получить свойство
         /// </summary>
-        /// <param name="info">информация</param>
-        public static void AppendInfo(string info)
+        /// <param name="name">имя свойства</param>
+        /// <returns></returns>
+        public static string GetProperty(string name)
         {
-            AppendEvent(message: info, type: "I");
+            var current = Current;
+            return current.Root[name];
         }
 
         /// <summary>
-        /// Добавить событие о предупреждении
+        /// Установить свойство
         /// </summary>
-        /// <param name="warn">предупреждение</param>
-        public static void AppendWarn(string warn)
+        /// <param name="name">имя</param>
+        /// <param name="value">значение</param>
+        public static void SetProperty(string name, string value)
         {
-            AppendEvent(message: warn, type: "W");
-        }
-
-        /// <summary>
-        /// Добавить событие об ошибке
-        /// </summary>
-        /// <param name="error">ошибка</param>
-        public static void AppendError(string error)
-        {
-            AppendEvent(message: error, type: "E");
-        }
-
-        /// <summary>
-        /// Добавить событие об ошибке
-        /// </summary>
-        /// <param name="exception">исключение</param>
-        public static void AppendError(Exception exception)
-        {
-            AppendError(error: exception.GetType().Name);
+            var current = Current;
+            current.Root[name] = value;
         }
     }
 }

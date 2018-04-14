@@ -36,5 +36,14 @@ namespace DistributedTrace.Core
                 base[key] = value;
             }
         }
+
+        /// <summary>
+        /// Отображаемый текст
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Join(", ", this.Select(kvp => kvp.Key + ": " + kvp.Value).ToArray());
+        }
     }
 }

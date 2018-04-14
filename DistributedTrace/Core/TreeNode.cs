@@ -7,6 +7,14 @@
     public class TreeNode<T>
     {
         /// <summary>
+        /// Предыдущий узел
+        /// </summary>
+        public TreeNode<T> Prev;
+        /// <summary>
+        /// Родительский узел
+        /// </summary>
+        public TreeNode<T> Parent;
+        /// <summary>
         /// Уровень
         /// </summary>
         public int Level;
@@ -15,8 +23,8 @@
         /// </summary>
         public int Position;
         /// <summary>
-        /// Узел
+        /// Значение
         /// </summary>
-        public T Node;
+        public T Value;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace DistributedTrace.Core
@@ -33,9 +34,10 @@ namespace DistributedTrace.Core
 
                 DateTime prev = default(DateTime);
 
-                @event.Visit((node) =>
+                foreach (var node in @event.Flatten())
                 {
-                    var e = node.Node;
+                    var e = node.Value;
+
                     string pref = new string(' ', node.Level * 2);
                     Console.Write(pref);
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -48,12 +50,11 @@ namespace DistributedTrace.Core
                     }
 
                     Console.ResetColor();
-                    if (string.IsNullOrEmpty(e.Type) == false)
-                        Console.Write("{0}> ", e.Type);
-                    if (string.IsNullOrEmpty(e.Source) == false)
-                        Console.Write("{0}: ", e.Source);
-                    if (string.IsNullOrEmpty(e.Message) == false)
-                        Console.Write("{0}", e.Message);
+                    Console.Write(e.Name);
+                    if (e.ContainsProperties)
+                        Console.Write("({0})"
+                            , string.Join(", "
+                                , e.Properties().Select(kvp => kvp.Key + ": " + kvp.Value).ToArray()));
 
                     if (e.Duration.HasValue)
                     {
@@ -66,15 +67,15 @@ namespace DistributedTrace.Core
                         Console.ResetColor();
                     }
 
-                    if (e.Different != null)
+                    if (e.ExcludedTime.HasValue)
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
-                        Console.Write("[{0}]", e.Different.Value.GetDisplayText());
+                        Console.Write("[{0}]", e.ExcludedTime.Value.GetDisplayText());
                         Console.ResetColor();
                     }
 
                     Console.WriteLine();
-                });
+                }
             }
         }
     }
