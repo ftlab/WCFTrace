@@ -32,8 +32,6 @@ namespace DistributedTrace.Core
                 Console.WriteLine(id.ToString());
                 Console.ResetColor();
 
-                DateTime prev = default(DateTime);
-
                 foreach (var node in @event.Flatten())
                 {
                     var e = node.Value;
@@ -41,13 +39,6 @@ namespace DistributedTrace.Core
                     string pref = new string(' ', node.Level * 2);
                     Console.Write(pref);
                     Console.ForegroundColor = ConsoleColor.Green;
-
-                    var bdt = e.GetBeginDateTime(id);
-                    if ((bdt - prev).TotalSeconds > 1)
-                    {
-                        Console.Write("[{0:HH:mm:ss}] ", bdt);
-                        prev = bdt;
-                    }
 
                     Console.ResetColor();
                     Console.Write(e.Name);

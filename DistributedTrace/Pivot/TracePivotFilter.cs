@@ -7,7 +7,7 @@ namespace DistributedTrace.Collector
 {
     public class TracePivotFilter
     {
-        public FilterBy Type;
+        public FilterType Type;
 
         public string TraceName;
 

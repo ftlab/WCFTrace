@@ -10,7 +10,7 @@ namespace DistributedTrace.Tests
         [TestMethod]
         public void TracePath_Tests()
         {
-            var path = new TracePath();
+            var path = new TreePath();
             Assert.AreEqual(path.Value, string.Empty);
 
             path.Push("Call");

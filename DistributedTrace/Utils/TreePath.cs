@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DistributedTrace.Core
 {
-    public class TracePath
+    public class TreePath
     {
         public const string SEPARATOR = "/";
 
@@ -15,7 +15,7 @@ namespace DistributedTrace.Core
 
         private string _lastItem;
 
-        public TracePath(string path = null)
+        public TreePath(string path = null)
         {
             if (path != null)
             {
@@ -26,7 +26,7 @@ namespace DistributedTrace.Core
             }
         }
 
-        public TracePath(TracePath path)
+        public TreePath(TreePath path)
         {
             if (path == null) throw new ArgumentNullException("path");
 
@@ -67,7 +67,7 @@ namespace DistributedTrace.Core
             _value = null;
         }
 
-        public bool Equals(TracePath p)
+        public bool Equals(TreePath p)
         {
             if (p == null) return false;
 
@@ -76,7 +76,7 @@ namespace DistributedTrace.Core
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as TracePath);
+            return Equals(obj as TreePath);
         }
 
         public override int GetHashCode()

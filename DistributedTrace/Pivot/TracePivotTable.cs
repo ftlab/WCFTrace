@@ -67,7 +67,7 @@ namespace DistributedTrace.Collector
 
                     foreach (var column in Columns)
                     {
-                        if (column.Value.Settings.Filter.Type == FilterBy.EventName)
+                        if (column.Value.Settings.Filter.Type == FilterType.EventName)
                         {
                             var eventName = column.Value.Settings.Filter.EventName;
                             row[column.Key].Measure.AddRange(@event.ByName(eventName));

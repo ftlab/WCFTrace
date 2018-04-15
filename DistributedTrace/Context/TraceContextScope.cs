@@ -167,7 +167,7 @@ namespace DistributedTrace.Core
             Context.Root.SetEnd(Id);
 
             if (RequiredWrite)
-                TraceWriter.Default.Write(Id, Context.Root);
+                Tracer.OnEvent(Id, Root);
 
             if (RequiredAdd)
                 _saved.Context.Root.AddEvent(Context.Root);

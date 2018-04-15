@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DistributedTrace.Collector
 {
-    public enum FilterBy
+    public enum FilterType
     {
         EventName,
         HasProperty,

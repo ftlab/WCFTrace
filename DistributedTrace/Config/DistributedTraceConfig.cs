@@ -12,9 +12,16 @@ namespace DistributedTrace.Config
 
         static DistributedTraceConfig()
         {
-            Default = (DistributedTraceConfig)ConfigurationManager.GetSection("DistributedTrace");
+            Default = (DistributedTraceConfig)ConfigurationManager.GetSection("distributedTrace");
             if (Default == null)
                 Default = new DistributedTraceConfig();
+        }
+
+        [ConfigurationProperty("traces")]
+        public TraceCollectorSettingsCollection Traces
+        {
+            get { return (TraceCollectorSettingsCollection)base["traces"]; }
+            set { base["traces"] = value; }
         }
     }
 }

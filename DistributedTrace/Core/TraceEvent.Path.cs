@@ -27,7 +27,7 @@ namespace DistributedTrace.Core
 
         public IEnumerable<TraceEvent> ByPath(string path)
         {
-            var tracePath = new TracePath();
+            var tracePath = new TreePath();
             int prevLevel = -1;
             foreach (var node in Flatten())
             {

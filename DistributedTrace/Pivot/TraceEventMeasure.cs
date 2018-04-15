@@ -2,8 +2,6 @@
 using DistributedTrace.Stat;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DistributedTrace.Collector
 {
@@ -15,7 +13,6 @@ namespace DistributedTrace.Collector
             AggregateType type
             , MeasureType measureType)
         {
-
             _ts = new TimeSpanAggregate(Type);
             MeasureType = measureType;
         }
