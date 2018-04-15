@@ -7,6 +7,12 @@ namespace DistributedTrace.Core
     /// </summary>
     public static class TimeSpanExtension
     {
+        public static string GetDisplayText(this TimeSpan? ts)
+        {
+            if (ts == null) return null;
+            return ts.Value.GetDisplayText();
+        }
+
         /// <summary>
         /// Получить отображаемый текст интервала
         /// </summary>

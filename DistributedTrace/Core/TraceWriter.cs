@@ -51,7 +51,7 @@ namespace DistributedTrace.Core
 
                     Console.ResetColor();
                     Console.Write(e.Name);
-                    if (e.ContainsProperties)
+                    if (e.PropertyCount > 0)
                         Console.Write("({0})"
                             , string.Join(", "
                                 , e.Properties().Select(kvp => kvp.Key + ": " + kvp.Value).ToArray()));

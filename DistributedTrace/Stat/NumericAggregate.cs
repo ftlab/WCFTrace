@@ -46,7 +46,17 @@ namespace DistributedTrace.Stat
         /// <param name="v"></param>
         public void Add(T v)
         {
-            if (v == null) return;
+            if (Type == AggregateType.None)
+                return;
+
+            if (Type == AggregateType.Count)
+            {
+                Count++;
+                return;
+            }
+
+            if (v == null)
+                return;
 
             if (IsEmpty)
             {

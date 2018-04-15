@@ -8,14 +8,27 @@ namespace DistributedTrace.Core
     public partial class TraceEvent
     {
         /// <summary>
-        /// Содержит свойства
+        /// Кол-во свойств
         /// </summary>
-        public bool ContainsProperties
+        public int PropertyCount
         {
             get
             {
-                return _properties != null && _properties.Count > 0;
+                if (_properties == null) return 0;
+                return _properties.Count;
             }
+        }
+
+        /// <summary>
+        /// Содержит свойство
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool ContainsProperty(string name)
+        {
+            if (_properties == null) return false;
+
+            return _properties.ContainsKey(name);
         }
 
         /// <summary>

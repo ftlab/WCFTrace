@@ -8,12 +8,12 @@ namespace DistributedTrace.Stat
     /// <summary>
     /// Аггрегат временного интервала
     /// </summary>
-    public class TimeSpanAggregate : IAggregate<TimeSpan>
+    public class TimeSpanAggregate : IAggregate<TimeSpan?>
     {
         /// <summary>
         /// Аггрегат тиков
         /// </summary>
-        private NumericAggregate<long> _ticks;
+        private NumericAggregate<long?> _ticks;
 
         /// <summary>
         /// Аггрегат временного интервала
@@ -21,7 +21,7 @@ namespace DistributedTrace.Stat
         /// <param name="type"></param>
         public TimeSpanAggregate(AggregateType type)
         {
-            _ticks = new NumericAggregate<long>(type);
+            _ticks = new NumericAggregate<long?>(type);
         }
 
         /// <summary>
@@ -51,18 +51,28 @@ namespace DistributedTrace.Stat
         /// <summary>
         /// Значение
         /// </summary>
-        public TimeSpan Value
+        public TimeSpan? Value
         {
-            get { return TimeSpan.FromTicks(_ticks.Value); }
+            get
+            {
+                var value = _ticks.Value;
+
+                if (value == null) return null;
+                return TimeSpan.FromTicks(value.Value);
+            }
         }
 
         /// <summary>
         /// Добавление
         /// </summary>
         /// <param name="value"></param>
-        public void Add(TimeSpan value)
+        public void Add(TimeSpan? value)
         {
-            _ticks.Add(value.Ticks);
+            long? ticks = null;
+            if (value != null)
+                ticks = value.Value.Ticks;
+
+            _ticks.Add(ticks);
         }
 
         /// <summary>

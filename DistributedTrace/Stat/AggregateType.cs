@@ -11,6 +11,14 @@ namespace DistributedTrace.Stat
     public enum AggregateType
     {
         /// <summary>
+        /// Не определено
+        /// </summary>
+        None,
+        /// <summary>
+        /// Кол-во
+        /// </summary>
+        Count,
+        /// <summary>
         /// Минимальное значение
         /// </summary>
         Min,
