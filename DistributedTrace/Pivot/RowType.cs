@@ -8,6 +8,7 @@ namespace DistributedTrace.Collector
     public enum RowType
     {
         EventName,
+        Property,
         Path
     }
 }

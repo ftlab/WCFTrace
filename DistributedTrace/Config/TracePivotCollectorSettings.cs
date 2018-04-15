@@ -29,6 +29,13 @@ namespace DistributedTrace.Config
             set { base["reset"] = value; }
         }
 
+        [ConfigurationProperty("rows")]
+        public TracePivotRowSettingsCollection Rows
+        {
+            get { return (TracePivotRowSettingsCollection)base["rows"]; }
+            set { base["rows"] = value; }
+        }
+
         [ConfigurationProperty("columns")]
         public TracePivotColumnSettingsCollection Columns
         {
@@ -38,7 +45,8 @@ namespace DistributedTrace.Config
     }
 
     [ConfigurationCollection(typeof(TracePivotCollectorSettings), AddItemName = "add")]
-    public class TracePivotCollectorSettingsCollection : ConfigurationElementCollection
+    public class TracePivotCollectorSettingsCollection
+        : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {

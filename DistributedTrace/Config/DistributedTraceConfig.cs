@@ -14,10 +14,6 @@ namespace DistributedTrace.Config
         {
             Default = (DistributedTraceConfig)ConfigurationManager.GetSection("distributedTrace");
 
-            var cl = Default.Pivots
-                .OfType<TracePivotCollectorSettings>().First()
-                .Columns.OfType<TracePivotColumnSettings>().First();
-
             if (Default == null)
                 Default = new DistributedTraceConfig();
         }
