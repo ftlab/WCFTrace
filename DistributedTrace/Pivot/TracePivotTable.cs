@@ -61,7 +61,7 @@ namespace DistributedTrace.Pivot
                     TracePivotRow row;
                     if (rows.TryGetValue(@event.Name, out row) == false)
                     {
-                        row = new TracePivotRow(this, setting, @event.Name);
+                        row = new TracePivotRow(this, setting, @event.Name, null);
                         rows.Add(row);
                     }
 

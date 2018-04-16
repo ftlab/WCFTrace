@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DistributedTrace.Core
 {
     /// <summary>
-    /// Временные метрики
+    /// Событие трассировки. Временные интервалы
     /// </summary>
     public partial class TraceEvent
     {

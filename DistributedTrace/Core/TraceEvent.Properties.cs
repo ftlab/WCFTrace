@@ -3,7 +3,7 @@
 namespace DistributedTrace.Core
 {
     /// <summary>
-    /// Свойства события
+    /// Событие трассировки. Свойства
     /// </summary>
     public partial class TraceEvent
     {

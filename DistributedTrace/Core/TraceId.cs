@@ -75,7 +75,7 @@ namespace DistributedTrace.Core
         {
             return new TraceId()
             {
-                Id = id ?? Guid.NewGuid().ToString(),
+                Id = id ?? Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('='),
                 Name = name,
                 Timestamp = DateTime.UtcNow,
             };
