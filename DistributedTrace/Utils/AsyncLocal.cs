@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Remoting.Messaging;
 
-namespace DistributedTrace.Core
+namespace DistributedTrace.Utils
 {
     /// <summary>
     /// Механизм хранения данных в некотором окружении

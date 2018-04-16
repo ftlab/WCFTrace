@@ -1,8 +1,10 @@
-﻿using System;
+﻿using DistributedTrace.Core;
+using DistributedTrace.Utils;
+using System;
 using System.Linq;
 using System.Text;
 
-namespace DistributedTrace.Core
+namespace DistributedTrace.Writer
 {
     /// <summary>
     /// Устройство записи события трассировки

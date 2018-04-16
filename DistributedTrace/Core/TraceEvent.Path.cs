@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DistributedTrace.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ namespace DistributedTrace.Core
 {
     public partial class TraceEvent
     {
-        public IEnumerable<TraceEvent> ByPropertyValue(string name, string value)
+        public IEnumerable<TraceEvent> ByProperty(string name, string value)
         {
             foreach (var node in Flatten())
             {

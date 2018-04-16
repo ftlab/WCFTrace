@@ -1,33 +1,58 @@
 ﻿using DistributedTrace.Config;
 using DistributedTrace.Core;
+using DistributedTrace.Writer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DistributedTrace.Collector
+namespace DistributedTrace.Pivot
 {
+    /// <summary>
+    /// Коллектор событий трассировок
+    /// </summary>
     public class TraceCollector
     {
-        private TraceCollectorSettings _config;
+        /// <summary>
+        /// настройки 
+        /// </summary>
+        private TraceCollectorSettings _settings;
 
-        public TraceCollector(TraceCollectorSettings config)
+        /// <summary>
+        /// Коллектор трассировок
+        /// </summary>
+        /// <param name="settings"></param>
+        public TraceCollector(TraceCollectorSettings settings)
         {
-            if (config == null) throw new ArgumentNullException("config");
-
-            _config = config;
+            if (settings == null) throw new ArgumentNullException("settings");
+            _settings = settings;
         }
 
-        public string Name { get { return Config.TraceName; } }
+        /// <summary>
+        /// Настройки
+        /// </summary>
+        public TraceCollectorSettings Settings { get { return _settings; } }
 
-        public TraceCollectorSettings Config { get { return _config; } }
+        /// <summary>
+        /// Флаг - включен
+        /// </summary>
+        public bool Enabled { get { return Settings.Enabled; } }
 
-        public bool Enabled { get { return Config.Enabled; } }
+        /// <summary>
+        /// Наименование трассировки
+        /// </summary>
+        public string TraceName { get { return Settings.TraceName; } }
 
-        public string TraceName { get { return Config.TraceName; } }
-
+        /// <summary>
+        /// Механизм записи трассировки
+        /// </summary>
         public ITraceWriter Writer { get { return TraceWriter.Default; } }
 
+        /// <summary>
+        /// Сбор
+        /// </summary>
+        /// <param name="id">идентификатор трассы</param>
+        /// <param name="event">событие</param>
         public void Collect(TraceId id, TraceEvent @event)
         {
             if (id == null) throw new ArgumentNullException("id");
@@ -41,35 +66,61 @@ namespace DistributedTrace.Collector
         }
     }
 
+    /// <summary>
+    /// Коллекция коллекторов трассировок
+    /// </summary>
     public class TraceCollectors : Dictionary<string, TraceCollector>
     {
-        private TraceCollectorSettingsCollection _config;
+        /// <summary>
+        /// настройки
+        /// </summary>
+        private TraceCollectorSettingsCollection _settings;
 
-        public TraceCollectors(TraceCollectorSettingsCollection config)
+        /// <summary>
+        /// Коллекция коллекторов трассировок
+        /// </summary>
+        /// <param name="settings"></param>
+        public TraceCollectors(TraceCollectorSettingsCollection settings)
         {
-            if (config == null) throw new ArgumentNullException("config");
-            _config = config;
+            if (settings == null) throw new ArgumentNullException("settings");
+            _settings = settings;
 
-            foreach (var item in _config.Cast<TraceCollectorSettings>())
+            foreach (var item in _settings.Cast<TraceCollectorSettings>())
                 Add(item);
         }
 
-        public TraceCollectorSettingsCollection Config { get { return _config; } }
+        /// <summary>
+        /// Настройки
+        /// </summary>
+        public TraceCollectorSettingsCollection Settings { get { return _settings; } }
 
-        public void Add(TraceCollectorSettings collectorConfig)
+        /// <summary>
+        /// Добавить коллектор
+        /// </summary>
+        /// <param name="settings"></param>
+        public void Add(TraceCollectorSettings settings)
         {
-            if (collectorConfig == null) throw new ArgumentNullException("collectorConfig");
+            if (settings == null) throw new ArgumentNullException("settings");
 
-            Add(new TraceCollector(collectorConfig));
+            Add(new TraceCollector(settings));
         }
 
+        /// <summary>
+        /// Добавить коллектор
+        /// </summary>
+        /// <param name="collector"></param>
         public void Add(TraceCollector collector)
         {
             if (collector == null) throw new ArgumentNullException("collector");
 
-            Add(collector.Name, collector);
+            Add(collector.TraceName, collector);
         }
 
+        /// <summary>
+        /// Сбор
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="event"></param>
         public void Collect(TraceId id, TraceEvent @event)
         {
             foreach (var collector in this.Values)

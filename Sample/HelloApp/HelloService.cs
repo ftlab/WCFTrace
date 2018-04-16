@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using DistributedTrace.Context;
 using DistributedTrace.Core;
 using System;
 using System.Threading;

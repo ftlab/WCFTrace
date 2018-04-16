@@ -1,9 +1,9 @@
-﻿using DistributedTrace.Core;
-using DistributedTrace.Stat;
+﻿using DistributedTrace.Aggregate;
+using DistributedTrace.Core;
 using System;
 using System.Collections.Generic;
 
-namespace DistributedTrace.Collector
+namespace DistributedTrace.Pivot
 {
     public class TraceEventMeasure : IAggregate<TimeSpan?>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DistributedTrace.Stat
+namespace DistributedTrace.Aggregate
 {
     /// <summary>
     /// Аггрегат временного интервала

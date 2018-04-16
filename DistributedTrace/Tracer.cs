@@ -1,4 +1,4 @@
-﻿using DistributedTrace.Collector;
+﻿using DistributedTrace.Pivot;
 using DistributedTrace.Config;
 using DistributedTrace.Core;
 using System;

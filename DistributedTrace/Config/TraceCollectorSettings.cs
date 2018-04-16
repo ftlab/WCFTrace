@@ -6,35 +6,39 @@ using System.Text;
 
 namespace DistributedTrace.Config
 {
-    public class TraceCollectorSettings : ConfigurationElement
+    /// <summary>
+    /// Настройки коллектора трассировок
+    /// </summary>
+    public class TraceCollectorSettings : BaseSettings
     {
+        /// <summary>
+        /// Имя трассировки
+        /// </summary>
         [ConfigurationProperty("traceName", IsKey = true, IsRequired = true)]
-        public string TraceName
+        public virtual string TraceName
         {
             get { return (string)base["traceName"]; }
             set { base["traceName"] = value; }
         }
 
+        /// <summary>
+        /// Включен коллектор
+        /// </summary>
         [ConfigurationProperty("enabled", DefaultValue = true)]
-        public bool Enabled
+        public virtual bool Enabled
         {
             get { return (bool)base["enabled"]; }
             set { base["enabled"] = value; }
         }
     }
 
+    /// <summary>
+    /// Коллекция настроек коллекторов трассировок
+    /// </summary>
     [ConfigurationCollection(typeof(TraceCollectorSettings), AddItemName = "add")]
     public class TraceCollectorSettingsCollection
-        : ConfigurationElementCollection
+        : BaseSettingsCollection<TraceCollectorSettings>
     {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new TraceCollectorSettings();
-        }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((TraceCollectorSettings)element).TraceName;
-        }
     }
 }

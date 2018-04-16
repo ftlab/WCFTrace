@@ -1,5 +1,6 @@
 ﻿using System;
 using DistributedTrace.Core;
+using DistributedTrace.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DistributedTrace.Tests

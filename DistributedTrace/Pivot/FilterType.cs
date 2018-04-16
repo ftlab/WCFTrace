@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DistributedTrace.Collector
+namespace DistributedTrace.Pivot
 {
     public enum FilterType
     {
         EventName,
-        HasProperty,
-        PropertyValue,
+        Property,
     }
 }

@@ -1,55 +1,61 @@
-﻿using DistributedTrace.Collector;
-using DistributedTrace.Stat;
-using System;
-using System.Collections.Generic;
+﻿using DistributedTrace.Aggregate;
+using DistributedTrace.Pivot;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 
 namespace DistributedTrace.Config
 {
-    public class TracePivotColumnSettings : ConfigurationElement
+    /// <summary>
+    /// Настройки колонки пивота
+    /// </summary>
+    public class TracePivotColumnSettings : BaseSettings
     {
+        /// <summary>
+        /// Имя колонки
+        /// </summary>
         [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
-        public string Name
+        public virtual string Name
         {
             get { return (string)base["name"]; }
             set { base["name"] = value; }
         }
 
+        /// <summary>
+        /// Тип измеряемой величины
+        /// </summary>
         [ConfigurationProperty("measure", DefaultValue = MeasureType.Duration)]
-        public MeasureType Measure
+        public virtual MeasureType Measure
         {
             get { return (MeasureType)base["measure"]; }
             set { base["measure"] = value; }
         }
 
+        /// <summary>
+        /// Тип аггрегата
+        /// </summary>
         [ConfigurationProperty("type", DefaultValue = AggregateType.Avg)]
-        public AggregateType Type
+        public virtual AggregateType Type
         {
             get { return (AggregateType)base["type"]; }
             set { base["type"] = value; }
         }
 
+        /// <summary>
+        /// Фильтр
+        /// </summary>
         [ConfigurationProperty("filter", IsRequired = false, DefaultValue = null)]
-        public TracePivotFilterSettings Filter
+        public virtual TracePivotFilterSettings Filter
         {
             get { return (TracePivotFilterSettings)base["filter"]; }
             set { base["filter"] = value; }
         }
     }
 
+    /// <summary>
+    /// Коллекция настроек колонок пивота
+    /// </summary>
     [ConfigurationCollection(typeof(TracePivotColumnSettings), AddItemName = "add")]
-    public class TracePivotColumnSettingsCollection : ConfigurationElementCollection
+    public class TracePivotColumnSettingsCollection
+        : BaseSettingsCollection<TracePivotColumnSettings>
     {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new TracePivotColumnSettings();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((TracePivotColumnSettings)element).Name;
-        }
     }
 }

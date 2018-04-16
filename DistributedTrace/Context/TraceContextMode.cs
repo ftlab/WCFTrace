@@ -1,4 +1,4 @@
-﻿namespace DistributedTrace.Core
+﻿namespace DistributedTrace.Context
 {
     /// <summary>
     /// Режим трассировки

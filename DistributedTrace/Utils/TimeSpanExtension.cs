@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DistributedTrace.Core
+namespace DistributedTrace.Utils
 {
     /// <summary>
     /// Расширение работы с интервалом времени

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 
-namespace DistributedTrace.Stat
+namespace DistributedTrace.Utils
 {
     /// <summary>
     /// Числовые операции

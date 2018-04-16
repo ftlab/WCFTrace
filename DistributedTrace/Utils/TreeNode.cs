@@ -1,4 +1,4 @@
-﻿namespace DistributedTrace.Core
+﻿namespace DistributedTrace.Utils
 {
     /// <summary>
     /// Узел дерева

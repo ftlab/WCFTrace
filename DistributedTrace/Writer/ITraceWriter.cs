@@ -1,4 +1,6 @@
-﻿namespace DistributedTrace.Core
+﻿using DistributedTrace.Core;
+
+namespace DistributedTrace.Writer
 {
     /// <summary>
     /// Механизм записи событий трассировки

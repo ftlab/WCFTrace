@@ -1,4 +1,5 @@
-﻿using DistributedTrace.Core;
+﻿using DistributedTrace.Context;
+using DistributedTrace.Core;
 using System;
 using System.Net;
 using System.ServiceModel;

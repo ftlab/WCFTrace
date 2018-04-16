@@ -1,6 +1,8 @@
-﻿using System;
+﻿using DistributedTrace.Core;
+using DistributedTrace.Utils;
+using System;
 
-namespace DistributedTrace.Core
+namespace DistributedTrace.Context
 {
     /// <summary>
     /// Окружение контекста трассировки

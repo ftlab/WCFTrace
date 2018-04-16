@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DistributedTrace.Core
+namespace DistributedTrace.Utils
 {
     /// <summary>
     /// Расширение для иерархических структур
